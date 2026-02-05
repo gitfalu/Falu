@@ -72,7 +72,7 @@ PS_INPUT VS_Main(VS_INPUT input)
     
     //ワールド座標変換
     float4 worldPos = mul(float4(input.Position, 1.0f), World);
-    output.Position = worldPos.xyz;
+    output.WorldPos = worldPos.xyz;
     
     // ビュー・プロジェクション変換
     float4 viewPos = mul(worldPos, View);
