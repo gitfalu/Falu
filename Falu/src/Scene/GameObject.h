@@ -42,9 +42,19 @@ namespace Falu
 
 		//=== Hierarchy ===
 		void SetParent(GameObject* parent);
+		GameObject* GetParent() const { return m_parent; }
+		void AddChild(GameObject* child);
+		void RemoveChild(GameObject* child);
+		const std::vector<GameObject*>& GetChildren() const { return m_children; }
 
+		//=== Properties ==
+		void SetName(const std::string& name) { m_name = name; }
+		const std::string& GetName() const { return m_name; }
 
-	private:
+		void SetActive(bool active) { m_isActive = active; }
+		bool IsActive()const { return m_isActive; }
+
+	protected:
 		std::string m_name;
 		Transform m_transform;
 		bool m_isActive;
@@ -53,4 +63,67 @@ namespace Falu
 		std::vector<GameObject*> m_children;//子供
 		std::vector<std::unique_ptr<Compoenent>> m_components;//所有コンポーネント
 	};
+
+	//====== Component ======
+	class Component
+	{
+	public:
+		Component(GameObject* owner) :m_owner(owner), m_isEnabled(true){}
+		virtual ~Component() = default;
+
+		virtual void Update(float deltaTime) {}
+		virtual void Render(){}
+
+		GameObject* GetOwner() const { return m_owner; }
+		void SetEnabled(bool enabled) { m_isEnabled = enabled; }
+		bool IsEnabled() const { return m_isEnabled; }
+
+	protected:
+		GameObject* m_owner;
+		bool m_isEnabled;
+	};
+
+	//====== Template implementations(コンポーネント塁) ======
+
+	//=== コンポーネント追加 ===
+	template<typename T>
+	T* GameObject::AddComponent()
+	{
+		static_assert(std::is_base_of<Component, T>)::value, "T must inherit from Component");
+
+		auto component = std::make_unique<T>(this);
+		T* ptr = component.get();
+		m_components.push_back < std::move(component));
+		return ptr;
+	}
+
+	//=== コンポーネント情報取得 ===
+	template<typename T>
+	T* GameObject::GetComponent()
+	{
+		static_assert)std::is_base_of<Component, T>::value, "T mmust inhirt from Component");
+
+		for (auto& component : m_components)
+		{
+			T* ptr = dynamic_cast<T*>(component.get());
+			if (ptr != nullptr)
+				return ptr;
+		}
+		return nullptr;
+	}
+
+	//=== コンポーネント除外 ===
+	template<typename T>
+	void GameObject::RemoveComponent()
+	{
+		static_assert(std::is_base_of<Component, T>::value, "T must inhirt from Component");
+
+		m_components.erase(
+			std::remove_if(m_components.begin(), m_components.end(),
+				[](const std::unique_ptr<Component>& component) {
+					return dynamic_cast<T*>(component.get()) != nullptr;
+				}),
+			m_components.end()
+		);
+	}
 }

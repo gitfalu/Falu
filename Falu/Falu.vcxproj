@@ -130,16 +130,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\Falu\Engine.h" />
+    <ClInclude Include="src\Falu\InputManager.h" />
     <ClInclude Include="src\Falu\TimeManager.h" />
     <ClInclude Include="src\Falu\Window.h" />
     <ClInclude Include="src\Include\MathHelper.h" />
     <ClInclude Include="src\Renderer\Camera.h" />
+    <ClInclude Include="src\Renderer\ConstantBuffer.h" />
     <ClInclude Include="src\Renderer\Mesh.h" />
     <ClInclude Include="src\Renderer\Material.h" />
     <ClInclude Include="src\Renderer\Renderer.h" />
     <ClInclude Include="src\Renderer\Shader.h" />
     <ClInclude Include="src\Renderer\Texture.h" />
     <ClInclude Include="src\Scene\GameObject.h" />
+    <ClInclude Include="src\Scene\MeshRenderer.h" />
+    <ClInclude Include="src\Scene\SceneManager.h" />
     <ClInclude Include="src\Scene\Transform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
