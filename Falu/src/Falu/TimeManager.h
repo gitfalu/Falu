@@ -11,13 +11,13 @@
 
 namespace Falu
 {
-	class TImeManager
+	class TimeManager
 	{
 	public:
-		TImeManager();
-		~TImeManager();
+		TimeManager();
+		~TimeManager();
 
-		void initialize();
+		void Initialize();
 		void Update();
 
 		float GetDeltaTime() { return m_deltaTime; }

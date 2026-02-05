@@ -24,7 +24,7 @@ namespace Falu
 	public:
 		static Engine& GetInstance();
 
-		bool Initialize(HINSTANCE hinstance, const std::wstring& title, int width, int height);
+		bool Initialize(HINSTANCE hInstance, const std::wstring& title, int width, int height);
 		void Run();
 		void Shutdown();
 
@@ -40,10 +40,10 @@ namespace Falu
 	private:
 		Engine();
 		~Engine();
-		Engine(const Engine&) = default;
+		Engine(const Engine&) = delete;
 		Engine& operator=(const Engine&) = delete;
 
-		void Update();
+		void Update(float deltaTime);
 		void Render();
 
 	private:

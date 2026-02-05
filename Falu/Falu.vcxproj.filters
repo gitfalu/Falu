@@ -67,4 +67,9 @@
   <ItemGroup>
     <FxCompile Include="src\Shader\Basic.hlsl" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Falu\Engine.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>

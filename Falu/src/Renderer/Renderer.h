@@ -36,7 +36,7 @@ namespace Falu
 		Renderer();
 		~Renderer();
 
-		void Initialize(HWND hWnd, int width, int height, const RenderSettings& settings);
+		bool Initialize(HWND hWnd, int width, int height, const RenderSettings& settings);
 		void Shutdown();
 		void OnResize(int width, int height);
 
