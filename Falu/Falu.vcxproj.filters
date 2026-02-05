@@ -64,4 +64,7 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="src\Shader\Basic.hlsl" />
+  </ItemGroup>
 </Project>
