@@ -18,7 +18,7 @@ namespace Falu
 		Window();
 		~Window();
 
-		bool Create(HINSTANCE hinstance, const std::wstring& title, int width, int height);
+		bool Create(HINSTANCE hInstance, const std::wstring& title, int width, int height);
 		void Destroy();
 		bool ProcessMessage();
 
