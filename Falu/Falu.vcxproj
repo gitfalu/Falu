@@ -160,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Falu\Engine.cpp" />
+    <ClCompile Include="src\Falu\TimeManager.cpp" />
     <ClCompile Include="src\Falu\Window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
