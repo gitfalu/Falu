@@ -56,7 +56,7 @@ namespace Falu
 		void SetAlbedoTexture(Texture* texture) { m_albedoTexture = texture; }
 		void SetNormalTexture(Texture* texture) { m_normalTexture = texture; }
 		void SetMetallicTexture(Texture* texture) { m_metalicTexture = texture; }
-		void SetRoughnessTexture(Texture* texture) { m_roughnessTexture = texture; }
+		void SetRoughnessTexture(Texture* texture) { m_roughnesTexture = texture; }
 
 		void Bind(ID3D11DeviceContext* context);
 		void UpdateConstantBuffer(ID3D11DeviceContext* context);
@@ -71,7 +71,7 @@ namespace Falu
 		Texture* m_albedoTexture;
 		Texture* m_normalTexture;
 		Texture* m_metalicTexture;
-		Texture* m_roughnessTexture;//反射する滑らかさを調整するマテリアル
+		Texture* m_roughnesTexture;//反射する滑らかさを調整するマテリアル
 
 	};
 }
