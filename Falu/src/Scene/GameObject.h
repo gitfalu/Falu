@@ -14,7 +14,7 @@
 
 namespace Falu
 {
-	class Compoenent;
+	class Component;
 	class MeshRenderer;
 
 	class GameObject
@@ -61,7 +61,7 @@ namespace Falu
 
 		GameObject* m_parent;//親
 		std::vector<GameObject*> m_children;//子供
-		std::vector<std::unique_ptr<Compoenent>> m_components;//所有コンポーネント
+		std::vector<std::unique_ptr<Component>> m_components;//所有コンポーネント
 	};
 
 	//====== Component ======
