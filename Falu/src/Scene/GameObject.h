@@ -101,7 +101,7 @@ namespace Falu
 	template<typename T>
 	T* GameObject::GetComponent()
 	{
-		static_assert)std::is_base_of<Component, T>::value, "T mmust inhirt from Component");
+		static_assert(std::is_base_of<Component, T>::value, "T mmust inhirt from Component");
 
 		for (auto& component : m_components)
 		{

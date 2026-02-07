@@ -101,7 +101,7 @@ namespace Falu
 		m_title = title;
 		if (m_hWnd)
 		{
-			SetWindowText(m_hWnd, title.c_str());
+			SetWindowText(m_hWnd, (const char*)title.c_str());
 		}
 	}
 	void Window::Resize(int width, int height)

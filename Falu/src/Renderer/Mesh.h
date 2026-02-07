@@ -56,6 +56,10 @@ namespace Falu
 		static std::unique_ptr<Mesh> CreateTriangle(ID3D11Device* device);
 		static std::unique_ptr<Mesh> CreateQuad(ID3D11Device* device);
 		static std::unique_ptr<Mesh> CreateCube(ID3D11Device* device);
+		/// @brief 球を作成する関数
+		/// @param device デバイス
+		/// @param segments 分割数
+		/// @return 
 		static std::unique_ptr<Mesh> CreateSphere(ID3D11Device* device, int segments = 32);
 		static std::unique_ptr<Mesh> CreateCylinder(ID3D11Device* device,int segments = 32);
 		static std::unique_ptr<Mesh> CreatePlane(ID3D11Device* device,

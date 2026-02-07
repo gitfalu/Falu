@@ -25,7 +25,7 @@ namespace Falu
 
 		virtual void OnLoad() {}
 		virtual void OnUnload() {}
-		virtual void UpDate(float deltaTime);
+		virtual void Update(float deltaTime);
 		virtual void Render();
 
 		GameObject* CreateGameObject(const std::string& name = "GameObject");

@@ -57,7 +57,7 @@ namespace Falu
 		void SetClearColor(const Math::Color& color) { m_settings.clearColor = color; }
 
 	private:
-		bool CreateDeviceAndSwaphain(HWND hWnd);
+		bool CreateDeviceAndSwapChain(HWND hWnd);
 		bool CreateRenderTargetView();
 		bool CreateDepthStencilBuffer();
 		bool CreateDepthStencilStates();
@@ -72,7 +72,7 @@ namespace Falu
 		ComPtr<IDXGISwapChain> m_swapChain;
 		ComPtr<ID3D11RenderTargetView> m_renderTargetView;
 		ComPtr<ID3D11Texture2D> m_depthStencilBuffer;//深度ステンシル/Zバッファ
-		ComPtr<ID3D11DepthStencilView> m_depthStencView;//深度ステンシル/Zバッファのビュー
+		ComPtr<ID3D11DepthStencilView> m_depthStencilView;//深度ステンシル/Zバッファのビュー
 		ComPtr<ID3D11DepthStencilState> m_depthStencilState;//深度ステンシル/Zバッファの状態
 		ComPtr<ID3D11DepthStencilState> m_depthDisabledState;
 		ComPtr<ID3D11RasterizerState> m_rasterizerState;

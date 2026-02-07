@@ -32,11 +32,12 @@ namespace Falu
 		//=== Projection settings ===
 		void SetPerspective(float fov, float aspectRatio, float nearZ, float farZ);
 		void SetOrthographic(float width,float height,float nearZ,float farZ);
+		void SetAspectRatio(float aspectRatio);
 
 		//=== Matrices ===
 		DirectX::XMMATRIX GetViewMatrix() const;
 		DirectX::XMMATRIX GetProjectionMatrix() const { return m_projectionMatrix; }
-		DirectX::XMMATRIX GEtViewProjectionMatrix() const;
+		DirectX::XMMATRIX GetViewProjectionMatrix() const;
 
 		//=== Camera controls ===
 		void LookAt(const Math::Vector3& target);

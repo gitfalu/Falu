@@ -67,7 +67,7 @@ namespace Falu
 
 		//=== Keyboard ===
 		bool IsKeyPressed(KeyCode key)const;
-		bool IsKeyHold(KeyCode key)const;
+		bool IsKeyHeld(KeyCode key)const;
 		bool IsKeyReleased(KeyCode key)const;
 
 		//=== Mouse ===

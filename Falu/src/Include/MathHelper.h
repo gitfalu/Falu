@@ -56,7 +56,10 @@ namespace Falu
 			Vector3(float x,float y,float z) :x(x), y(y), z(z) {}
 
 			XMFLOAT3 ToXMFLOAT3() const { return XMFLOAT3(x, y, z); }
-			XMVECTOR ToXMVECTOR() const { return XMLoadFloat3(&ToXMFLOAT3()); }
+			XMVECTOR ToXMVECTOR() const { 
+				XMFLOAT3 stack = ToXMFLOAT3();
+				return XMLoadFloat3(&stack); 
+			}
 
 			static Vector3 Zero()		{ return Vector3(0.0f, 0.0f, 0.0f); }
 			static Vector3 One()		{ return Vector3(1.0f, 1.0f, 1.0f); }
@@ -73,7 +76,9 @@ namespace Falu
 			Vector4(float x, float y, float z,float w) :x(x), y(y), z(z),w(w) {}
 
 			XMFLOAT4 ToXMFLOAT4() const { return XMFLOAT4(x, y, z,w); }
-			XMVECTOR ToXMVECTOR() const { return XMLoadFloat4(&ToXMFLOAT4()); }
+			XMVECTOR ToXMVECTOR() const { 
+				XMFLOAT4 stack = ToXMFLOAT4();
+				return XMLoadFloat4(&stack); }
 		};
 
 
