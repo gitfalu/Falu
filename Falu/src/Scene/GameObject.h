@@ -89,11 +89,11 @@ namespace Falu
 	template<typename T>
 	T* GameObject::AddComponent()
 	{
-		static_assert(std::is_base_of<Component, T>)::value, "T must inherit from Component");
+		static_assert(std::is_base_of<Component, T>::value, "T must inherit from Component");
 
 		auto component = std::make_unique<T>(this);
 		T* ptr = component.get();
-		m_components.push_back < std::move(component));
+		m_components.push_back(std::move(component));
 		return ptr;
 	}
 

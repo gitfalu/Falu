@@ -125,7 +125,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	// ƒGƒ“ƒWƒ“‚Ì‰Šú‰»
 	if (!Engine::GetInstance().Initialize(hInstance, L"Falu Game Engine", 1280, 720))
 	{
-		MessageBox(nullptr, L"Failed to initialize engine!", L"Error", MB_OK | MB_ICONERROR);
+		MessageBox(nullptr, "Failed to initialize engine!", "Error", MB_OK | MB_ICONERROR);
 		return -1;
 	}
 
