@@ -175,6 +175,7 @@ xcopy /Y /D /I "$(ProjectDir)Assets" "$(OutDir)Assets\"</Command>
     <ClCompile Include="src\Renderer\Texture.cpp" />
     <ClCompile Include="src\Scene\GameObject.cpp" />
     <ClCompile Include="src\Scene\MeshRenderer.cpp" />
+    <ClCompile Include="src\Scene\SceneManager.cpp" />
     <ClCompile Include="src\Scene\Transform.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
