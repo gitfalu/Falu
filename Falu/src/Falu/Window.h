@@ -32,7 +32,7 @@ namespace Falu
 
 	private:
 		static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-		LRESULT HandleMessage(UINT message, WPARAM wParam, LPARAM lParam);
+		LRESULT HandleMessage(HWND hWnd,UINT message, WPARAM wParam, LPARAM lParam);
 
 	private:
 		HWND m_hWnd;

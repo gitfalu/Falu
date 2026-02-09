@@ -101,7 +101,7 @@ namespace Falu
 		m_title = title;
 		if (m_hWnd)
 		{
-			SetWindowText(m_hWnd, (const char*)title.c_str());
+			SetWindowTextW(m_hWnd,title.c_str());
 		}
 	}
 	void Window::Resize(int width, int height)
@@ -114,6 +114,7 @@ namespace Falu
 			Engine::GetInstance().GetRenderer()->OnResize(width,height);
 		}
 	}
+	
 	LRESULT Window::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		Window* window = nullptr;
@@ -132,12 +133,12 @@ namespace Falu
 
 		if (window)
 		{
-			return window->HandleMessage(message, wParam, lParam);
+			return window->HandleMessage(hWnd,message, wParam, lParam);
 		}
 
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
-	LRESULT Window::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
+	LRESULT Window::HandleMessage(HWND hWnd,UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		// 入力管理にメッセージを飛ばす
 		if (Engine::GetInstance().GetInputManager())
@@ -178,6 +179,6 @@ namespace Falu
 			m_isResizing = false;
 			return 0;
 		}
-		return DefWindowProc(m_hWnd,message,wParam,lParam);
+		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 }

@@ -41,16 +41,32 @@ public:
 		// レンダラーにカメラを設定
 		Engine::GetInstance().GetRenderer()->SetCamera(m_camera);
 
+		// layoutの作成
+		D3D11_INPUT_ELEMENT_DESC layout[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,
+			  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+
+			{ "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12,
+			  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 24,
+			  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+
+			{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32,
+			  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+
 		// シェーダーの読み込み
 		auto device = Engine::GetInstance().GetRenderer()->GetDevice();
 
 		m_shader = ShaderManager::GetInstance().LoadShader(
 			device,
 			"Basic",
-			L"Shader/Basic.hlsl",
-			L"Shader/Basic.hlsl",
-			nullptr,
-			0
+			L"Shaders/HLSL/Basic.hlsl",
+			L"Shaders/HLSL/Basic.hlsl",
+			layout,
+			_countof(layout)
 		);
 
 		// マテリアルの作成
@@ -65,6 +81,7 @@ public:
 		// 回転する三角形の作成
 		auto triangleObject = CreateGameObject("Triangle");
 		auto meshRenderer = triangleObject->AddComponent<MeshRenderer>();
+
 		m_mesh = Mesh::CreateTriangle(device).release();
 		meshRenderer->SetMesh(m_mesh);
 		meshRenderer->SetMaterial(m_material);
@@ -123,7 +140,7 @@ private:
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
 	// エンジンの初期化
-	if (!Engine::GetInstance().Initialize(hInstance, L"Falu Game Engine", 1280, 720))
+	if (!Engine::GetInstance().Initialize(hInstance, L"FaluEngine", 1280, 720))
 	{
 		MessageBox(nullptr, "Failed to initialize engine!", "Error", MB_OK | MB_ICONERROR);
 		return -1;

@@ -47,7 +47,7 @@ namespace Falu
 		D3D11_BUFFER_DESC indexBufferDesc = {};
 		indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		indexBufferDesc.ByteWidth = sizeof(unsigned int) * m_indexCount;
-		indexBufferDesc.BindFlags = D3D10_BIND_INDEX_BUFFER;
+		indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		indexBufferDesc.CPUAccessFlags = 0;
 
 		D3D11_SUBRESOURCE_DATA indexData = {};

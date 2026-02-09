@@ -72,7 +72,7 @@ namespace Falu
 
 		//=== Mouse ===
 		bool IsMouseButtonPressed(MouseButton button)const;
-		bool IsMouseButtonHold(MouseButton button)const;
+		bool IsMouseButtonHeld(MouseButton button)const;
 		bool IsMouseButtonReleased(MouseButton button)const;
 
 		const MouseState& GetMouseState() const { return m_mouseState; }

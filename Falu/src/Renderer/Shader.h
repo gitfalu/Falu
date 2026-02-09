@@ -33,7 +33,7 @@ namespace Falu
 		Shader();
 		~Shader();
 
-		bool LoadVartexShader(ID3D11Device* device,const std::wstring& filename,
+		bool LoadVertexShader(ID3D11Device* device,const std::wstring& filename,
 			const std::vector<ShaderDefine>& define = {});
 		bool LoadPixelShader(ID3D11Device* device, const std::wstring& filename,
 			const std::vector<ShaderDefine>& define = {});

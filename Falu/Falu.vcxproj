@@ -162,6 +162,7 @@ xcopy /Y /D /I "$(ProjectDir)Assets" "$(OutDir)Assets\"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Falu\Engine.cpp" />
+    <ClCompile Include="src\Falu\InputManager.cpp" />
     <ClCompile Include="src\Falu\TimeManager.cpp" />
     <ClCompile Include="src\Falu\Window.cpp" />
     <ClCompile Include="src\Main.cpp">

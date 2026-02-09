@@ -34,7 +34,7 @@ namespace Falu
 		bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 		bufferDesc.ByteWidth = sizeof(MaterialConstantBuffer);
 		bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		bufferDesc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
+		bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
 		HRESULT hr = device->CreateBuffer(&bufferDesc, nullptr, &m_constantBuffer);
 		return SUCCEEDED(hr);
