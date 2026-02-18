@@ -13,6 +13,8 @@
 #include "../Renderer/Renderer.h"
 #include "../Scene/SceneManager.h"
 
+#include "imgui.h"
+
 namespace Falu
 {
 	Engine& Engine::GetInstance()
@@ -61,6 +63,17 @@ namespace Falu
 		// 時間管理の初期化
 		m_timeManager = std::make_unique<TimeManager>();
 		m_timeManager->Initialize();
+
+		// ImGui Initialize
+		m_imguiManager = std::make_unique<ImGuiManager>();
+		if (!m_imguiManager->Initialize(
+			m_window->GetHandle(),
+			m_renderer->GetDevice(),
+			m_renderer->GetContext()))
+		{
+			OutputDebugStringW(L"[Engine] ERROR: ImGui initialization failed\n");
+			return false;
+		}
 
 		m_isRunning = true;
 		return true;
@@ -111,11 +124,49 @@ namespace Falu
 			m_sceneManager->Render();
 		}
 
+		// ImGui Render
+		m_imguiManager->BeginFrame();
+
+		// Debug Render
+		if (m_showDebugWindow)
+		{
+			m_imguiManager->ShowDebugWindow(&m_showDebugWindow,
+				(float)m_timeManager->GetFPS(),
+				m_timeManager->GetDeltaTime());
+		}
+
+		if (m_showHierarchy)
+			m_imguiManager->ShowSceneHierarchy(&m_showHierarchy);
+
+		if (m_showInspector)
+			m_imguiManager->ShowInspector(&m_showInspector);
+
+		if (m_showConsole)
+			m_imguiManager->ShowConsole(&m_showConsole);
+
+		// メインメニューバー
+		if (ImGui::BeginMainMenuBar())
+		{
+			if (ImGui::BeginMenu("Window"))
+			{
+				ImGui::MenuItem("Debug Info", nullptr, &m_showDebugWindow);
+				ImGui::MenuItem("Scene Hierarchy", nullptr, &m_showHierarchy);
+				ImGui::MenuItem("Inspector", nullptr, &m_showInspector);
+				ImGui::MenuItem("Console", nullptr, &m_showConsole);
+				ImGui::EndMenu();
+			}
+			ImGui::EndMainMenuBar();
+		}
+
+		m_imguiManager->EndFrame();
+		m_imguiManager->Render();
+
 		m_renderer->EndFrame();
 	}
 
 	void Engine::Shutdown()
 	{
+		m_imguiManager.reset();
 		m_sceneManager.reset();
 		m_inputManager.reset();
 		m_renderer.reset();

@@ -10,6 +10,7 @@
 #include <Windows.h>
 #include <memory>
 #include <string>
+#include "Include/Utils/ImGuiManager.h"
 
 namespace Falu
 {
@@ -54,5 +55,14 @@ namespace Falu
 		std::unique_ptr<TimeManager> m_timeManager;
 
 		bool m_isRunning;
+
+		// ImGui menber
+		std::unique_ptr<ImGuiManager> m_imguiManager;
+
+		// Debug Window flags
+		bool m_showDebugWindow = true;
+		bool m_showHierarchy = true;
+		bool m_showInspector = true;
+		bool m_showConsole = true;
 	};
 }

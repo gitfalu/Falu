@@ -46,6 +46,12 @@ namespace Falu
 		if (!CreateSamplerStates())
 			return false;
 
+		// 2026/02/17
+		if (!m_perObjectCB.Initialize(m_device.Get()))
+			return false;
+		if (!m_perFrameCB.Initialize(m_device.Get()))
+			return false;
+
 		SetupViewport();
 
 		return true;
@@ -131,6 +137,29 @@ namespace Falu
 	{
 		if (!mesh || !material || !m_currentCamera)
 			return;
+		using namespace DirectX;
+
+		PerFrameConstantBuffer perFrame;
+		perFrame.view = XMMatrixTranspose(m_currentCamera->GetViewMatrix());
+		perFrame.projection = XMMatrixTranspose(m_currentCamera->GetProjectionMatrix());
+		perFrame.viewProjection = XMMatrixTranspose(m_currentCamera->GetViewProjectionMatrix());
+
+		Math::Vector3 camPos = m_currentCamera->GetTransform().GetPosition();
+		perFrame.cameraPosition = XMFLOAT4(camPos.x, camPos.y, camPos.z, 1.0f);
+		perFrame.ambientLight = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+		perFrame.time = 0.0f;
+		perFrame.deltaTime = 0.0f;
+
+		m_perFrameCB.Update(m_context.Get(), perFrame);
+		m_perFrameCB.BindVS(m_context.Get(), 1);// register(b1)
+		m_perFrameCB.BindPS(m_context.Get(), 1);
+
+		PerObjectConstantBuffer perObject;
+		perObject.world = XMMatrixTranspose(worldMatrix);
+		perObject.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, worldMatrix));
+
+		m_perObjectCB.Update(m_context.Get(), perObject);
+		m_perObjectCB.BindVS(m_context.Get(), 0);
 
 		// マテリアルのバインド
 		material->Bind(m_context.Get());

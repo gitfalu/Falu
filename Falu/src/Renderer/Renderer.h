@@ -12,6 +12,7 @@
 #include <wrl/client.h>
 #include <memory>
 #include "../Include/MathHelper.h"
+#include "../Renderer/ConstantBuffer.h"
 
 namespace Falu
 {
@@ -80,6 +81,9 @@ namespace Falu
 		ComPtr<ID3D11BlendState> m_alphaBlendState;
 		ComPtr<ID3D11SamplerState> m_samplerState;
 		
+		// 2026/02/17 ’Ç‰Á
+		ConstantBuffer<PerObjectConstantBuffer> m_perObjectCB;
+		ConstantBuffer<PerFrameConstantBuffer> m_perFrameCB;
 
 		Camera* m_currentCamera;
 		RenderSettings m_settings;

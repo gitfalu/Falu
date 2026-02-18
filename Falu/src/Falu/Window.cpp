@@ -7,9 +7,15 @@
  *********************************************************************/
 #include "Window.h"
 
+// ImGui include
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+
 #include "Engine.h"
 #include "InputManager.h"
 #include "../Renderer/Renderer.h"
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 namespace Falu
 {
@@ -140,6 +146,16 @@ namespace Falu
 	}
 	LRESULT Window::HandleMessage(HWND hWnd,UINT message, WPARAM wParam, LPARAM lParam)
 	{
+		// ImGuiにメッセージを送る
+		if (ImGui_ImplWin32_WndProcHandler(m_hWnd, message, wParam, lParam))
+			return true;
+
+		// 入力管理にメッセージを渡す
+		if (Engine::GetInstance().GetInputManager())
+		{
+			Engine::GetInstance().GetInputManager()->ProcessMessage(message,wParam,lParam);
+		}
+
 		// 入力管理にメッセージを飛ばす
 		if (Engine::GetInstance().GetInputManager())
 		{
