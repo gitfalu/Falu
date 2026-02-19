@@ -31,6 +31,10 @@ namespace Falu
 		Transform& GetTransform() { return m_transform; }
 		const Transform& GetTransform() const { return m_transform; }
 
+		// ライトプロパティ
+		void SetColor(const Math::Color& color) { m_color = color; }
+		Math::Color GetColor() const { return m_color; }
+
 		void SetIntensity(float intensity) { m_intensity = intensity; }
 		float GetIntensity() const { return m_intensity; }
 

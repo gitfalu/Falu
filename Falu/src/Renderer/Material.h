@@ -22,14 +22,14 @@ namespace Falu
 	struct MaterialProperties
 	{
 		Math::Color albedo;
-		float metalic;
+		float metallic;
 		float roughness;
 		float ao;
 		Math::Vector3 emissive;
 
 		MaterialProperties()
 			:albedo(1.0f,1.0f,1.0f,1.0f)
-			,metalic(0.0f)
+			,metallic(0.0f)
 			,roughness(0.5f)
 			,ao(1.0f)
 			,emissive(0.0f,0.0f,0.0f)

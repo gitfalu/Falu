@@ -84,7 +84,7 @@ namespace Falu
 		);
 
 		cb.properties = DirectX::XMFLOAT4(
-			m_properties.metalic,
+			m_properties.metallic,
 			m_properties.roughness,
 			m_properties.ao,
 			0.0f

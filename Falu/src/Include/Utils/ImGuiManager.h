@@ -12,6 +12,10 @@
 
 namespace Falu
 {
+	class GameObject;
+	class Transform;
+	class Light;
+
 	class ImGuiManager
 	{
 	public:
@@ -31,7 +35,22 @@ namespace Falu
 		void ShowInspector(bool* open);
 		void ShowConsole(bool* open);
 
+		// 追加機能
+		void ShowTransformEditor(bool* open, 
+			Transform* transform, const char* name = "Transform");
+		void ShowLightEditor(bool* open, Light* light);
+		void ShowMaterialEditor(bool* open);
+
+		// 選択オブジェクト管理
+		void SetSelectedObject(GameObject* obj) { m_selectedObject = obj; }
+		GameObject* GetSelectedObject()const { return m_selectedObject; }
+
+		void SetSelectedLight(Light* light) { m_selectedLight = light; }
+		Light* GetSelectedLight() const { return m_selectedLight; }
+
 	private:
 		bool m_initialized;
+		GameObject* m_selectedObject;
+		Light* m_selectedLight;
 	};
 }

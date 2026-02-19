@@ -85,6 +85,8 @@ namespace Falu
 		ConstantBuffer<PerObjectConstantBuffer> m_perObjectCB;
 		ConstantBuffer<PerFrameConstantBuffer> m_perFrameCB;
 
+		ConstantBuffer<LightConstantBuffer> m_lightCB;
+
 		Camera* m_currentCamera;
 		RenderSettings m_settings;
 

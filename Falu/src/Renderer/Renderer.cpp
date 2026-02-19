@@ -9,6 +9,7 @@
 #include "Camera.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "Light.h"
 
 namespace Falu
 {
@@ -139,6 +140,7 @@ namespace Falu
 			return;
 		using namespace DirectX;
 
+		// PerFrame定数バッファの更新
 		PerFrameConstantBuffer perFrame;
 		perFrame.view = XMMatrixTranspose(m_currentCamera->GetViewMatrix());
 		perFrame.projection = XMMatrixTranspose(m_currentCamera->GetProjectionMatrix());
@@ -154,12 +156,57 @@ namespace Falu
 		m_perFrameCB.BindVS(m_context.Get(), 1);// register(b1)
 		m_perFrameCB.BindPS(m_context.Get(), 1);
 
+		// PerObject 定数のバッファの更新
 		PerObjectConstantBuffer perObject;
 		perObject.world = XMMatrixTranspose(worldMatrix);
 		perObject.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, worldMatrix));
 
 		m_perObjectCB.Update(m_context.Get(), perObject);
 		m_perObjectCB.BindVS(m_context.Get(), 0);
+
+		// Light定数バッファの更新
+		auto& lights = LightManager::GetInstace().GetLights();
+		if (!lights.empty() && lights[0]->IsEnabled())
+		{
+			Light* light = lights[0].get();
+
+			LightConstantBuffer lightCB;
+
+			// ライトの位置
+			Math::Vector3 lightPos = light->GetTransform().GetPosition();
+			lightCB.lightPosition = XMFLOAT4(lightPos.x, lightPos.y, lightPos.z, 1.0f);
+
+			// ライトの方向
+			Math::Vector3 lightDir = light->GetTransform().GetForward();
+			lightCB.lightDirection = XMFLOAT4(lightDir.x, lightDir.y, lightDir.z, 0.0f);
+
+			// ライトの色
+			Math::Color lightColor = light->GetColor();
+			lightCB.lightColor = XMFLOAT4(
+				lightColor.r,
+				lightColor.g,
+				lightColor.b,
+				lightColor.a
+			);
+
+			// ライトのパラメータ
+			lightCB.lightParam = XMFLOAT4(
+				light->GetIntensity(), // intensity
+				light->GetRange(), // range
+				(float)light->GetType(), // type
+				0.0f
+			);
+
+			// 定数バッファを更新してバインド
+			if (!m_lightCB.GetBuffer())
+			{
+				m_lightCB.Initialize(m_device.Get());
+			}
+
+			m_lightCB.Update(m_context.Get(), lightCB);
+			m_lightCB.BindVS(m_context.Get(), 3);
+			m_lightCB.BindPS(m_context.Get(), 3);
+		}
 
 		// マテリアルのバインド
 		material->Bind(m_context.Get());

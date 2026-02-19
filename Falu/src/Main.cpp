@@ -14,6 +14,7 @@
 #include "Renderer/Mesh.h"
 #include "Renderer/Material.h"
 #include "Renderer/Shader.h"
+#include "Renderer/Light.h"
 #include "Falu/InputManager.h"
 
 using namespace Falu;
@@ -26,6 +27,7 @@ public:
 
 	void OnLoad()override
 	{
+		auto device = Engine::GetInstance().GetRenderer()->GetDevice();
 		// カメラの作成
 		auto cameraObject = CreateGameObject("MainCamera");
 		m_camera = new Camera();
@@ -37,9 +39,18 @@ public:
 			100.0f
 		);
 		SetMainCamera(m_camera);
-
 		// レンダラーにカメラを設定
 		Engine::GetInstance().GetRenderer()->SetCamera(m_camera);
+
+		// ライトの作成
+		Light* mainLight = LightManager::GetInstace().CreateLight(LightType::Directional);
+		mainLight->SetColor(Math::Color(1.0f, 1.0f, 1.0f, 1.0f));
+		mainLight->SetIntensity(1.0f);
+		mainLight->GetTransform().SetRotation(
+			Math::ToRadians(45.0f),
+			Math::ToRadians(-30.0f),
+			0.0f
+		);
 
 		// layoutの作成
 		D3D11_INPUT_ELEMENT_DESC layout[] =
@@ -58,7 +69,6 @@ public:
 		};
 
 		// シェーダーの読み込み
-		auto device = Engine::GetInstance().GetRenderer()->GetDevice();
 
 		m_shader = ShaderManager::GetInstance().LoadShader(
 			device,
@@ -76,17 +86,16 @@ public:
 
 		MaterialProperties props;
 		props.albedo = Math::Color(0.8f, 0.3f, 0.3f, 1.0f);
+		props.roughness = 0.5f;
+		props.metallic = 0.0f;
 		m_material->SetProperties(props);
 
-		// 回転する三角形の作成
-		auto triangleObject = CreateGameObject("Triangle");
-		auto meshRenderer = triangleObject->AddComponent<MeshRenderer>();
+		m_mesh = Mesh::CreateCube(device).release();
 
-		m_mesh = Mesh::CreateTriangle(device).release();
+		m_cubeObject = CreateGameObject("Cube");
+		auto meshRenderer = m_cubeObject->AddComponent<MeshRenderer>();
 		meshRenderer->SetMesh(m_mesh);
 		meshRenderer->SetMaterial(m_material);
-
-		m_triangleObject = triangleObject;
 	}
 
 	void Update(float deltaTime)override
@@ -112,11 +121,11 @@ public:
 			m_camera->MoveUp(-moveSpeed);
 
 		// 三角形を回転
-		if (m_triangleObject)
+		if (m_cubeObject)
 		{
 			static float rotation = 0.0f;
-			rotation += deltaTime;
-			m_triangleObject->GetTransform().SetRotation(0, rotation, 0);
+			rotation += deltaTime * 0.5f;
+			m_cubeObject->GetTransform().SetRotation(Math::ToRadians(30.0f),rotation, 0);
 		}
 	}
 
@@ -132,7 +141,7 @@ private:
 	Shader* m_shader = nullptr;
 	Material* m_material = nullptr;
 	Mesh* m_mesh = nullptr;
-	GameObject* m_triangleObject = nullptr;
+	GameObject* m_cubeObject = nullptr;
 };
 
 
