@@ -144,6 +144,10 @@ namespace Falu
 		if (m_showConsole)
 			m_imguiManager->ShowConsole(&m_showConsole);
 
+		static bool showMaterialEditor = true;
+		if (showMaterialEditor)
+			m_imguiManager->ShowMaterialEditor(&showMaterialEditor);
+
 		// メインメニューバー
 		if (ImGui::BeginMainMenuBar())
 		{

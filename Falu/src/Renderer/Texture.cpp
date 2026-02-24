@@ -14,9 +14,16 @@
  *********************************************************************/
 #include "Texture.h"
 
-#include <wincodec.h>// 画像処理に使うヘッダ
+#define USE_STB_IMAGE
 
+#ifdef USE_STB_IMAGE
+ // stb_image.h
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+#else
+#include <wincodec.h>// 画像処理に使うヘッダ
 #pragma comment(lib,"windowscodecs.lib")
+#endif
 
 namespace Falu
 {
@@ -34,6 +41,44 @@ namespace Falu
 
 	bool Texture::LoadFromFile(ID3D11Device* device, const std::wstring& filename)
 	{
+#ifdef USE_STB_IMAGE
+		return LoadFromFile_STB(device, filename);
+#else
+		return LoadFromFile_WIC(device, filename);
+#endif
+	}
+
+	bool Texture::LoadFromFile_STB(ID3D11Device* device, const std::wstring& filename)
+	{
+		// ワイド文字列をマルチバイト文字列に変換
+		char filenameStr[512];
+		size_t convertedChars = 0;
+		wcstombs_s(&convertedChars, filenameStr, filename.c_str(), sizeof(filenameStr));
+
+		// stb_imageで画像を読み込み
+		int width, height, channels;
+		unsigned char* data = stbi_load(filenameStr, &width, &height, &channels, 4);
+
+		if (!data)
+		{
+			OutputDebugStringA("[Texture::STB] Failed to Load: ");
+			OutputDebugStringA(filenameStr);
+			OutputDebugStringA("\n");
+			return false;
+		}
+
+		m_width = width;
+		m_height = height;
+
+		bool result = CreateFromData(device, data, width, height, 4);
+		stbi_image_free(data);
+
+		return result;
+	}
+
+	bool Texture::LoadFromFile_WIC(ID3D11Device* device, const std::wstring& filename)
+	{
+#ifndef USE_STB_IMAGE
 		// WICファクトリーの作成
 		ComPtr<IWICImagingFactory> wicFactory;
 		HRESULT hr = CoCreateInstance(
@@ -109,6 +154,9 @@ namespace Falu
 
 		// テクスチャの作成
 		return CreateFromData(device,pixels.data(),m_width,m_height,4);
+#else
+		return false;
+#endif
 	}
 
 	bool Texture::CreateFromData(ID3D11Device* device, const void* data, int width, int height, int channels)
@@ -147,7 +195,10 @@ namespace Falu
 
 	void Texture::Bind(ID3D11DeviceContext* context, unsigned int slot)
 	{
-		context->PSSetShaderResources(slot, 1, m_shaderResourceView.GetAddressOf());
+		if (m_shaderResourceView)
+		{
+			context->PSSetShaderResources(slot, 1, m_shaderResourceView.GetAddressOf());
+		}
 	}
 
 	void Texture::Unbind(ID3D11DeviceContext* context, unsigned int slot)
@@ -164,8 +215,8 @@ namespace Falu
 
 	TextureManager& TextureManager::GetInstance()
 	{
-		static TextureManager Instance;
-		return Instance;
+		static TextureManager instance;
+		return instance;
 	}
 	Texture* TextureManager::LoadTexture(ID3D11Device* device, const std::string& name, const std::wstring& filename)
 	{

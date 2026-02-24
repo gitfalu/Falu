@@ -24,6 +24,8 @@ namespace Falu
 		~Texture();
 
 		bool LoadFromFile(ID3D11Device* device, const std::wstring& filename);
+		bool LoadFromFile_STB(ID3D11Device* device, const std::wstring& filename);
+		bool LoadFromFile_WIC(ID3D11Device* device, const std::wstring& filename);
 		bool CreateFromData(ID3D11Device* device,
 			const void* data, int width, int height, int channels);
 

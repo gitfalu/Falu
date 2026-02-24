@@ -16,6 +16,7 @@
 #include "Renderer/Shader.h"
 #include "Renderer/Light.h"
 #include "Falu/InputManager.h"
+#include "Renderer/Texture.h"
 
 using namespace Falu;
 
@@ -89,6 +90,17 @@ public:
 		props.roughness = 0.5f;
 		props.metallic = 0.0f;
 		m_material->SetProperties(props);
+
+		Texture* texture = TextureManager::GetInstance().LoadTexture(
+			device,
+			"test_Texture",
+			L"Assets/Textures/test.png"
+		);
+
+		if (texture)
+		{
+			m_material->SetAlbedoTexture(texture);
+		}
 
 		m_mesh = Mesh::CreateCube(device).release();
 

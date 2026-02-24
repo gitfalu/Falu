@@ -10,9 +10,15 @@
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
 
+#include "Scene/SceneManager.h"
 #include "Scene/GameObject.h"
 #include "Scene/Transform.h"
+#include "Scene/MeshRenderer.h"
+#include "Renderer/Renderer.h"
 #include "Renderer/Light.h"
+#include "Renderer/Material.h"
+#include "Renderer/Texture.h"
+#include "Falu/Engine.h"
 
 namespace Falu
 {
@@ -109,13 +115,42 @@ namespace Falu
 		ImGui::Text("Scene Objects:");
 		ImGui::Separator();
 
+		// シーンからオブジェクトを取得
+		Scene* scene = Engine::GetInstance().GetSceneManager()->GetCurrentScene();
+		if (!scene)
+		{
+			ImGui::Text("No Scene loaded");
+			ImGui::End();
+			return;
+		}
+
+		const auto& gameobjects = scene->GetGameObject();
+
 		if (ImGui::TreeNode("Root"))
 		{
-			if (ImGui::Selectable("Triangle", m_selectedObject != nullptr))
+			for (auto& obj : gameobjects)
 			{
+				if (ImGui::Selectable(obj->GetName().c_str(), m_selectedObject == obj.get()))
+				{
+					m_selectedObject = obj.get();
+					m_selectedLight = nullptr;
+				}
 
+				if (ImGui::BeginPopupContextItem())
+				{
+					if (ImGui::MenuItem("Delete"))
+					{
+						scene->DestroyGameObject(obj.get());
+					}
+					/*
+					if (ImGui::MenuItem("Deplicate"))
+					{
+						scene->CreateGameObject
+					}
+					*/
+					ImGui::EndPopup();
+				}
 			}
-
 			ImGui::TreePop();
 		}
 
@@ -319,6 +354,140 @@ namespace Falu
 
 	void ImGuiManager::ShowMaterialEditor(bool* open)
 	{
+		if (!ImGui::Begin("Material Editor", open))
+		{
+			ImGui::End();
+			return;
+		}
+
+		if (!m_selectedObject)
+		{
+			ImGui::Text("No Object selected");
+			ImGui::End();
+			return;
+		}
+
+		// Get MeshRnederer
+		auto meshRenderer = m_selectedObject->GetComponent<MeshRenderer>();
+		if (!meshRenderer)
+		{
+			ImGui::Text("No MeshRenderer component");
+			ImGui::End();
+			return;
+		}
 		
+		Material* material = meshRenderer->GetMaterial();
+		if (!material)
+		{
+			ImGui::Text("No material assigned");
+			ImGui::End();
+			return;
+		}
+
+		MaterialProperties props = material->GetProperties();
+
+		ImGui::Text("Material Propaties");
+		ImGui::Separator();
+
+		// Albedo Color
+		float albedo[4] = { props.albedo.r,props.albedo.g,props.albedo.b,props.albedo.a };
+		if (ImGui::ColorEdit4("Albedo", albedo))
+		{
+			props.albedo = Math::Color(albedo[0], albedo[1], albedo[2], albedo[3]);
+			material->SetProperties(props);
+		}
+
+		// Metallic
+		if (ImGui::SliderFloat("Metallic", &props.metallic, 0.0f, 1.0f))
+		{
+			material->SetProperties(props);
+		}
+
+		// Roughness
+		if (ImGui::SliderFloat("Roughness", &props.roughness, 0.0f, 1.0f))
+		{
+			material->SetProperties(props);
+		}
+
+		// Ambieent Occlusion
+		if (ImGui::SliderFloat("AO", &props.ao, 0.0f, 1.0f))
+		{
+			material->SetProperties(props);
+		}
+
+		ImGui::Separator();
+
+		ImGui::Text("Textures");
+
+		// Albedo Texture
+		Texture* albedoTex = material->GetAlbedoTexture();
+		if (albedoTex)
+		{
+			ImGui::Text("Albedo Texture: %d%d", albedoTex->GetWidth(), albedoTex->GetHeight());
+
+			// Texture Preview
+			ImGui::Image(
+				(ImTextureID)albedoTex->GetShaderResourceView(),
+				ImVec2(128, 128)
+			);
+
+			if (ImGui::Button("Remove Texture"))
+			{
+				material->SetAlbedoTexture(nullptr);
+			}
+		}
+		else
+		{
+			ImGui::Text("No albedo texture");
+
+			// Texture Load Button
+			if (ImGui::Button("Load Texture"))
+			{
+				ImGui::OpenPopup("Load Texture");
+			}
+		}
+
+		// Load Texture Popup
+		if (ImGui::BeginPopup("Load Texture"))
+		{
+			ImGui::Text("Enter texture path:");
+
+			static char texturePath[256] = "Assets/Textures/example.png";
+			ImGui::InputText("Path", texturePath, sizeof(texturePath));
+
+			if (ImGui::Button("Load"))
+			{
+				auto device = Engine::GetInstance().GetRenderer()->GetDevice();
+
+				std::string pathStr(texturePath);
+				std::wstring wPath(pathStr.begin(), pathStr.end());
+
+				Texture* tex = TextureManager::GetInstance().LoadTexture(
+					device,
+					"loaded_texture",
+					wPath
+				);
+
+				if (tex)
+				{
+					material->SetAlbedoTexture(tex);
+					ImGui::CloseCurrentPopup();
+				}
+				else
+				{
+					ImGui::TextColored(ImVec4(1, 0, 0, 1), "Failed to load texture");
+				}
+			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel"))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
+
+		ImGui::End();
 	}
 }

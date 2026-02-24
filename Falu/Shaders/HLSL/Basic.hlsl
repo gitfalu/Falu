@@ -49,7 +49,7 @@ struct PS_INPUT
     float4 Position : SV_POSITION;
     float3 WorldPos : POSITIONO;
     float3 Normal : NORMAL;
-    float2 TexCoord : TEXCOORD;
+    float2 TexCoord : TEXCOORD0;
     float4 Color : COLOR;
 };
 
@@ -102,10 +102,17 @@ float4 PS_Main(PS_INPUT input) : SV_TARGET
     float3 lightDir = normalize(-LightDirection.xyz);
     
     // カメラ方向
-    float3 viewDir = normalize(CameraPosition.xyz);
+    float3 viewDir = normalize(CameraPosition.xyz - input.WorldPos);
     
     // アルベド（拡散反射色）
     float4 albedo = MaterialAlbedo * input.Color;
+    
+    // テクスチャがあればサンプリング
+    if(MaterialProperties.w > 0.5f)
+    {
+        float4 texColor = AlbedoTexture.Sample(DefaultSampler, input.TexCoord);
+        albedo *= texColor;
+    }
     
     // アンビエントライト
     float3 ambient = AmbientLight.rgb * AmbientLight.a * albedo.rgb;
@@ -132,7 +139,14 @@ float4 PS_Main(PS_INPUT input) : SV_TARGET
 //**********************************************
 float4 PS_Unlit(PS_INPUT input) : SV_TARGET
 {
-    return MaterialAlbedo * input.Color;
+    float albedo = MaterialAlbedo * input.Color;
+    if(MaterialProperties.w > 0.5f)
+    {
+        float4 texColor = AlbedoTexture.Sample(DefaultSampler, input.TexCoord);
+        albedo *= texColor;
+    }
+    
+    return albedo;
 }
 
 //**********************************************
@@ -145,4 +159,14 @@ float4 PS_NormalVisualize(PS_INPUT input) : SV_TARGET
     float3 normal = normalize(input.Normal);
     float3 color = normal * 0.5f + 0.5f; // -1 .. 1 を 0 .. 1 に変換
     return float4(color, 1.0f);
+}
+
+//**********************************************
+// 
+// ピクセルシェーダー - UV可視化
+// 
+//**********************************************
+float4 PS_UVVisualize(PS_INPUT input) : SV_TARGET
+{
+    return float4(input.TexCoord.x, input.TexCoord.y, 0.0f, 1.0f);
 }

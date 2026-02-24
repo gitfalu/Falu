@@ -83,11 +83,13 @@ namespace Falu
 			m_properties.albedo.a
 		);
 
+		float useTexture = (m_albedoTexture != nullptr) ? 1.0f : 0.0f;
+
 		cb.properties = DirectX::XMFLOAT4(
 			m_properties.metallic,
 			m_properties.roughness,
 			m_properties.ao,
-			0.0f
+			useTexture
 		);
 
 		cb.emissive = DirectX::XMFLOAT4(

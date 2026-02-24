@@ -53,10 +53,17 @@ namespace Falu
 		void SetShader(Shader* shader) { m_shader = shader; }
 		void SetProperties(const MaterialProperties& props);
 
+		// Setter
 		void SetAlbedoTexture(Texture* texture) { m_albedoTexture = texture; }
 		void SetNormalTexture(Texture* texture) { m_normalTexture = texture; }
 		void SetMetallicTexture(Texture* texture) { m_metalicTexture = texture; }
 		void SetRoughnessTexture(Texture* texture) { m_roughnesTexture = texture; }
+
+		// Getter
+		Texture* GetAlbedoTexture() const { return m_albedoTexture; }
+		Texture* GetNormalTexture() const { return m_normalTexture; }
+		Texture* GetMetallicTexture() const { return m_metalicTexture; }
+		Texture* GetRoughnessTexture() const { return m_roughnesTexture; }
 
 		void Bind(ID3D11DeviceContext* context);
 		void UpdateConstantBuffer(ID3D11DeviceContext* context);
