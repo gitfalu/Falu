@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "../Include/MathHelper.h"
+#include "Include/Math/MathHelper.h"
 
 namespace Falu
 {
@@ -29,7 +29,7 @@ namespace Falu
 		Math::Vector3 GetRotation() const { return m_rotation;}
 
 		//=== Scale ===
-		void SetScale(Math::Vector3& scale);
+		void SetScale(const Math::Vector3& scale);
 		void SetScale(float x, float y, float z);
 		void SetScale(float uniformScale);
 		Math::Vector3 GetScale()const { return m_scale; }

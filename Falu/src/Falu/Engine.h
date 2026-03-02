@@ -11,6 +11,7 @@
 #include <memory>
 #include <string>
 #include "Include/Utils/ImGuiManager.h"
+#include "Include/Utils/Gizmo.h"
 
 namespace Falu
 {
@@ -47,6 +48,12 @@ namespace Falu
 		void Update(float deltaTime);
 		void Render();
 
+		//=== Mouse Picking === 
+		void HandleMousePicking();
+
+		//=== Gizmo Control ===
+		void HandleGizmoInput();
+
 	private:
 		std::unique_ptr<Window> m_window;
 		std::unique_ptr<Renderer> m_renderer;
@@ -64,5 +71,8 @@ namespace Falu
 		bool m_showHierarchy = true;
 		bool m_showInspector = true;
 		bool m_showConsole = true;
+
+		std::unique_ptr<Gizmo> m_gizmo;
+		bool m_showGizmo;
 	};
 }

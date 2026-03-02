@@ -9,10 +9,15 @@
 
 namespace Falu
 {
+	int GameObject::s_nextID = 0;
+
 	GameObject::GameObject(const std::string& name)
 		: m_name(name)
+		, m_tag("Untagged")
+		, m_id(s_nextID++)
 		, m_isActive(true)
 		, m_parent(nullptr)
+		, m_localBounds(Math::Vector3(-0.5f,-0.5f,-0.5f),Math::Vector3(0.5f,0.5f,0.5f))// Default 1 * 1 * 1 Cube
 	{
 
 	}
@@ -79,6 +84,27 @@ namespace Falu
 				child->Render();
 			}
 		}
+	}
+
+	Math::AABB GameObject::GetWorldBounds() const
+	{
+		return m_localBounds.Transform(m_transform.GetWorldMatrix());
+	}
+
+	bool GameObject::RayCastHit(const Math::Ray& ray, float& distance) const
+	{
+		if (!m_isActive) return false;
+
+		Math::AABB worldBounds = GetWorldBounds();
+
+		float tMin, tMax;
+		if (worldBounds.IntersectsRay(ray, tMin, tMax))
+		{
+			distance = (tMin > 0.0f) ? tMin : tMax;
+			return distance > 0.0f;
+		}
+
+		return false;
 	}
 
 	void GameObject::SetParent(GameObject* parent)

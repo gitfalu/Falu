@@ -8,8 +8,9 @@
 #pragma once
 
 #include <DirectXMath.h>
-#include "../Include/MathHelper.h"
-#include "../Scene/Transform.h"
+#include "Include/Math/MathHelper.h"
+#include "Include/Math/Ray.h"
+#include "Scene/Transform.h"
 
 namespace Falu
 {
@@ -53,6 +54,9 @@ namespace Falu
 		void MoveForward(float distance);
 		void MoveRight(float distance);
 		void MoveUp(float distance);
+
+		//=== Create Ray from Screen ===
+		Math::Ray ScreenPointToRay(float screenX, float screenY, float screenWidth, float screenHeight)const;
 
 	private:
 		void UpdateProjectionMatrix();

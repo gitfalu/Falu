@@ -11,6 +11,7 @@
 #include <vector>
 #include <memory>
 #include "Transform.h"
+#include "Include/Math/Ray.h"
 
 namespace Falu
 {
@@ -29,6 +30,14 @@ namespace Falu
 		//=== Transform ===
 		Transform& GetTransform() { return m_transform; }
 		const Transform& GetTransform() const { return m_transform; }
+
+		//=== Bounding Box ===
+		void SetBounds(const Math::AABB& bounds) { m_localBounds = bounds; }
+		Math::AABB GetLocalBounds() const { return m_localBounds; }
+		Math::AABB GetWorldBounds() const;
+
+		//=== Judge Ray Cast ===
+		bool RayCastHit(const Math::Ray& ray, float& distance) const;
 
 		//=== Component management ===
 		template<typename T>
@@ -54,14 +63,26 @@ namespace Falu
 		void SetActive(bool active) { m_isActive = active; }
 		bool IsActive()const { return m_isActive; }
 
+		//=== Tag ===
+		void SetTag(const std::string& tag) { m_tag = tag; }
+		const std::string& GetTag()const { return m_tag; }
+
+		//=== ID ===
+		int GetID() const { return m_id; }
+
 	protected:
 		std::string m_name;
+		std::string m_tag;
+		int m_id;
 		Transform m_transform;
 		bool m_isActive;
 
 		GameObject* m_parent;//親
 		std::vector<GameObject*> m_children;//子供
 		std::vector<std::unique_ptr<Component>> m_components;//所有コンポーネント
+
+		static int s_nextID;
+		Math::AABB m_localBounds;// Local Bounding Box
 	};
 
 	//====== Component ======

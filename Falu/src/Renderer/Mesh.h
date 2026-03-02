@@ -12,7 +12,8 @@
 #include <DirectXMath.h>
 #include <vector>
 #include <memory>
-#include "../Include/MathHelper.h"
+#include "Include/Math/MathHelper.h"
+#include "Include/Math/Ray.h"
 
 namespace Falu
 {
@@ -64,6 +65,9 @@ namespace Falu
 		static std::unique_ptr<Mesh> CreateCylinder(ID3D11Device* device,int segments = 32);
 		static std::unique_ptr<Mesh> CreatePlane(ID3D11Device* device,
 			float width = 10.0f,float depth = 10.0f,int division = 10);
+
+		// Calc Bounding Box
+		Math::AABB CalculateBounds() const;
 		
 		//=== Getters ===
 		unsigned int GetVertexCount() const { return m_vertexCount; }

@@ -148,7 +148,9 @@ xcopy /Y /D /I "$(ProjectDir)Assets" "$(OutDir)Assets\"</Command>
     <ClInclude Include="src\Falu\InputManager.h" />
     <ClInclude Include="src\Falu\TimeManager.h" />
     <ClInclude Include="src\Falu\Window.h" />
-    <ClInclude Include="src\Include\MathHelper.h" />
+    <ClInclude Include="src\Include\Math\MathHelper.h" />
+    <ClInclude Include="src\Include\Math\Ray.h" />
+    <ClInclude Include="src\Include\Utils\Gizmo.h" />
     <ClInclude Include="src\Include\Utils\ImGuiManager.h" />
     <ClInclude Include="src\Renderer\Camera.h" />
     <ClInclude Include="src\Renderer\ConstantBuffer.h" />
@@ -177,6 +179,7 @@ xcopy /Y /D /I "$(ProjectDir)Assets" "$(OutDir)Assets\"</Command>
     <ClCompile Include="src\Falu\InputManager.cpp" />
     <ClCompile Include="src\Falu\TimeManager.cpp" />
     <ClCompile Include="src\Falu\Window.cpp" />
+    <ClCompile Include="src\Include\Utils\Gizmo.cpp" />
     <ClCompile Include="src\Include\Utils\ImGuiManager.cpp" />
     <ClCompile Include="src\Main.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

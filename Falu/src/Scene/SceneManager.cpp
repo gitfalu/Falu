@@ -74,6 +74,95 @@ namespace Falu
 			m_gameObjects.end()
 		);
 	}
+
+	GameObject* Scene::FindGameObjectByName(const std::string& name)
+	{
+		for (const auto& obj : m_gameObjects)
+		{
+			if (obj->GetName() == name)
+			{
+				return obj.get();
+			}
+		}
+		return nullptr;
+	}
+
+	GameObject* Scene::FindGameObjectByID(int id)
+	{
+		for (const auto& obj : m_gameObjects)
+		{
+			if (obj->GetID() == id)
+			{
+				return obj.get();
+			}
+		}
+		return nullptr;
+	}
+
+	std::vector<GameObject*> Scene::FinGameObjectByTag(const std::string& tag)
+	{
+		std::vector<GameObject*> results;
+
+		for (const auto& obj : m_gameObjects)
+		{
+			if (obj->GetTag() == tag)
+			{
+				results.push_back(obj.get());
+			}
+		}
+
+		return results;
+	}
+
+	GameObject* Scene::RayCast(const Math::Ray& ray, float maxDistance)
+	{
+		GameObject* hitObject = nullptr;
+		float closestDistancce = maxDistance;
+
+		for (const auto& obj : m_gameObjects)
+		{
+			if (!obj->IsActive()) continue;
+
+			float distance;
+			if (obj->RayCastHit(ray, distance))
+			{
+				if (distance < closestDistancce)
+				{
+					closestDistancce = distance;
+					hitObject = obj.get();
+				}
+			}
+		}
+
+		return hitObject;
+	}
+
+	std::vector<GameObject*> Scene::RaycastAll(const Math::Ray& ray, float maxDistance)
+	{
+		std::vector<GameObject*> hitObjects;
+
+		for (const auto& obj : m_gameObjects)
+		{
+			if (!obj->IsActive()) continue;
+
+			float distance;
+			if (obj->RayCastHit(ray, distance) && distance <= maxDistance)
+			{
+				hitObjects.push_back(obj.get());
+			}
+		}
+
+		// Sort for near
+		std::sort(hitObjects.begin(), hitObjects.end(),
+			[&ray](GameObject* a, GameObject* b) {
+				float distA, distB;
+				a->RayCastHit(ray, distA);
+				b->RayCastHit(ray, distB);
+				return distA < distB;
+			});
+
+		return hitObjects;
+	}
 	
 	//****************************************************************
 	// 

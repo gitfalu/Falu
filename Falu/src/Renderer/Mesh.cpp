@@ -348,4 +348,27 @@ namespace Falu
 
 		return nullptr;
 	}
+	Math::AABB Mesh::CalculateBounds() const
+	{
+		if (m_vertices.empty())
+		{
+			return Math::AABB(Math::Vector3(0, 0, 0), Math::Vector3(0, 0, 0));
+		}
+
+		Math::Vector3 min = m_vertices[0].position;
+		Math::Vector3 max = m_vertices[0].position;
+
+		for (const auto& vertex : m_vertices)
+		{
+			min.x = std::min(min.x, vertex.position.x);
+			min.y = std::min(min.y, vertex.position.y);
+			min.z = std::min(min.z, vertex.position.z);
+
+			max.x = std::max(max.x, vertex.position.x);
+			max.y = std::max(max.y, vertex.position.y);
+			max.z = std::max(max.z, vertex.position.z);
+		}
+
+		return Math::AABB(min,max);
+	}
 }

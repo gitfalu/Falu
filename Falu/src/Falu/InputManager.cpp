@@ -126,8 +126,8 @@ namespace Falu
 
 	bool InputManager::IsKeyPressed(KeyCode key) const
 	{
-		auto it = m_keyStates.find(static_cast<int>(key));
-		if (it != m_keyStates.end())
+		auto it = m_previousKeyStates.find(static_cast<int>(key));
+		if (it != m_previousKeyStates.end())
 		{
 			return it->second == KeyState::Pressed;
 		}
@@ -156,8 +156,8 @@ namespace Falu
 
 	bool InputManager::IsMouseButtonPressed(MouseButton button) const
 	{
-		auto it = m_mouseButtonStates.find(static_cast<int>(button));
-		if (it != m_mouseButtonStates.end())
+		auto it = m_previousMouseButtonStates.find(static_cast<int>(button));
+		if (it != m_previousMouseButtonStates.end())
 		{
 			return it->second == KeyState::Pressed;
 		}

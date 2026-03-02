@@ -7,7 +7,7 @@
  *********************************************************************/
 #pragma once
 
-#include "Include/MathHelper.h"
+#include "Include/Math/MathHelper.h"
 #include "Scene/Transform.h"
 #include <memory>
 #include <vector>

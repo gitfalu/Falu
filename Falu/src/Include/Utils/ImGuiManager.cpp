@@ -14,6 +14,7 @@
 #include "Scene/GameObject.h"
 #include "Scene/Transform.h"
 #include "Scene/MeshRenderer.h"
+#include "Renderer/Mesh.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/Light.h"
 #include "Renderer/Material.h"
@@ -112,9 +113,6 @@ namespace Falu
 			return;
 		}
 
-		ImGui::Text("Scene Objects:");
-		ImGui::Separator();
-
 		// シーンからオブジェクトを取得
 		Scene* scene = Engine::GetInstance().GetSceneManager()->GetCurrentScene();
 		if (!scene)
@@ -124,34 +122,114 @@ namespace Falu
 			return;
 		}
 
-		const auto& gameobjects = scene->GetGameObject();
+		ImGui::Text("Scene : %s",scene->GetName().c_str());
+		ImGui::Separator();
 
-		if (ImGui::TreeNode("Root"))
+		// Create Object Button
+		if (ImGui::Button("+ Create Empty"))
 		{
-			for (auto& obj : gameobjects)
+			GameObject* newObj = scene->CreateGameObject("GameObject");
+			m_selectedObject = newObj;
+			m_selectedLight = nullptr;
+		}
+		ImGui::SameLine();
+
+		if (ImGui::Button("+ Create Cube"))
+		{
+			auto device = Engine::GetInstance().GetRenderer()->GetDevice();
+			GameObject* newObj = scene->CreateGameObject("Cube");
+
+			// Add MeshRenderer
+			auto meshRenderer = newObj->AddComponent<MeshRenderer>();
+			auto mesh = Mesh::CreateCube(device).release();
+			meshRenderer->SetMesh(mesh);
+
+			// Set tentative Material
+			//meshRenderer->SetMaterial();
+
+			m_selectedObject = newObj;
+			m_selectedLight = nullptr;
+		}
+
+		ImGui::Separator();
+
+		// GameObject List
+		const auto& gameobjects = scene->GetGameObject();
+		ImGui::Text("Objects (&zu):",gameobjects.size());// View All Object Count
+
+		for (const auto& obj : gameobjects)
+		{
+			GameObject* ptr = obj.get();
+
+			ImGui::PushID(ptr->GetID());
+
+			bool isSelected = (m_selectedObject == ptr);
+
+			// icon + name + tag
+			char label[256];
+			sprintf_s(label, "%s [%s] (ID:%d)",
+				ptr->GetName().c_str(),
+				ptr->GetTag().c_str(),
+				ptr->GetID()
+				);
+
+			// Can Select Item
+			if (ImGui::Selectable(label,isSelected))
 			{
-				if (ImGui::Selectable(obj->GetName().c_str(), m_selectedObject == obj.get()))
+				m_selectedObject = ptr;
+				m_selectedLight = nullptr;
+			}
+
+			// Right Click menu
+			if (ImGui::BeginPopupContextItem())
+			{
+				if (ImGui::MenuItem("Deplicate"))
 				{
-					m_selectedObject = obj.get();
-					m_selectedLight = nullptr;
+					GameObject* deplicate = scene->CreateGameObject(ptr->GetName() + " (Copy)");
+					deplicate->GetTransform().SetPosition(ptr->GetTransform().GetPosition());
+					deplicate->GetTransform().SetRotation(ptr->GetTransform().GetRotation());
+					deplicate->GetTransform().SetScale(ptr->GetTransform().GetScale());
 				}
 
-				if (ImGui::BeginPopupContextItem())
+				if (ImGui::MenuItem("Delete", "Del"))
 				{
-					if (ImGui::MenuItem("Delete"))
+					scene->DestroyGameObject(ptr);
+					if (m_selectedObject == ptr)
 					{
-						scene->DestroyGameObject(obj.get());
+						m_selectedObject = nullptr;
 					}
-					/*
-					if (ImGui::MenuItem("Deplicate"))
-					{
-						scene->CreateGameObject
-					}
-					*/
-					ImGui::EndPopup();
 				}
+
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Rename"))
+				{
+
+				}
+
+				ImGui::EndPopup();
 			}
-			ImGui::TreePop();
+
+			// Drag & Drop(Sort)
+			if (ImGui::BeginDragDropSource())
+			{
+				ImGui::SetDragDropPayload("GAMEOBJECT", &ptr, sizeof(GameObject*));
+				ImGui::Text("Moving: %s", ptr->GetName().c_str());
+				ImGui::EndDragDropSource();
+			}
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GAMEOBJECT"))
+				{
+					GameObject* draggedObj = *(GameObject**)payload->Data;
+					// Set Parent
+					draggedObj->SetParent(ptr);
+				}
+				ImGui::EndDragDropTarget();
+			}
+
+			ImGui::PopID();
 		}
 
 		ImGui::Separator();
@@ -243,7 +321,7 @@ namespace Falu
 		}
 
 		// Rotation(Degree)
-		Math::Vector3 rot = transform->GetPosition();
+		Math::Vector3 rot = transform->GetRotation();
 		float rotation[3] = {
 			Math::ToDegrees(rot.x),
 			Math::ToDegrees(rot.y),

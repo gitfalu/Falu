@@ -47,7 +47,7 @@ namespace Falu
 		m_isDirty = true;
 	}
 
-	void Transform::SetScale(Math::Vector3& scale)
+	void Transform::SetScale(const Math::Vector3& scale)
 	{
 		m_scale = scale;
 		m_isDirty = true;

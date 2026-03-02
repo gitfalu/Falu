@@ -156,12 +156,6 @@ namespace Falu
 			Engine::GetInstance().GetInputManager()->ProcessMessage(message,wParam,lParam);
 		}
 
-		// 入力管理にメッセージを飛ばす
-		if (Engine::GetInstance().GetInputManager())
-		{
-			Engine::GetInstance().GetInputManager()->ProcessMessage(message, wParam, lParam);
-		}
-
 		switch (message)
 		{
 		case WM_DESTROY:

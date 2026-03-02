@@ -145,6 +145,39 @@ namespace Falu
 		));
 	}
 
+	Math::Ray Camera::ScreenPointToRay(float screenX, float screenY, float screenWidth, float screenHeight) const
+	{
+		using namespace DirectX;
+
+		// Convert to NDC
+		float ndcX = (2.0f * screenX / screenWidth) - 1.0f;
+		float ndcY = 1.0f - (2.0f * screenY / screenHeight);
+
+		XMVECTOR nearPoint = XMVectorSet(ndcX, ndcY, 0.0f, 1.0f);
+		XMVECTOR farPoint = XMVectorSet(ndcX, ndcY, 1.0f, 1.0f);
+
+		XMMATRIX viewMatrix = GetViewMatrix();
+		XMMATRIX projectionMatrix = m_projectionMatrix;
+		XMMATRIX viewProjMatrix = viewMatrix * projectionMatrix;
+		XMMATRIX invViewProj = XMMatrixInverse(nullptr, viewProjMatrix);
+
+		// NDC Convert to WorldPosition
+		nearPoint = XMVector3TransformCoord(nearPoint, invViewProj);
+		farPoint = XMVector3TransformCoord(farPoint, invViewProj);
+
+		// Calc Ray origin & Direction
+		XMVECTOR direction = XMVector3Normalize(farPoint - nearPoint);
+
+		XMFLOAT3 origin, dir;
+		XMStoreFloat3(&origin, nearPoint);
+		XMStoreFloat3(&dir, direction);
+
+		return Math::Ray(
+				Math::Vector3(origin.x, origin.y, origin.z),
+				Math::Vector3(dir.x, dir.y, dir.z)
+			);
+	}
+
 	void Camera::UpdateProjectionMatrix()
 	{
 		using namespace DirectX;

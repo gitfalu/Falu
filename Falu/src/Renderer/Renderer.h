@@ -11,8 +11,8 @@
 #include <dxgi.h>
 #include <wrl/client.h>
 #include <memory>
-#include "../Include/MathHelper.h"
-#include "../Renderer/ConstantBuffer.h"
+#include "Include/Math/MathHelper.h"
+#include "Renderer/ConstantBuffer.h"
 
 namespace Falu
 {
@@ -22,6 +22,8 @@ namespace Falu
 	class Camera;
 	class Mesh;
 	class Material;
+	class Shader;
+	class GameObject;
 
 	struct RenderSettings
 	{
@@ -57,6 +59,13 @@ namespace Falu
 
 		void SetClearColor(const Math::Color& color) { m_settings.clearColor = color; }
 
+		void SetOutlineShader(Shader* shader) { m_outlineShader = shader; }
+		Shader* GetOutlineShader()const { return m_outlineShader; }
+
+		void RenderOutline(GameObject* object, const Math::Color& color, float width);
+		void SetDepthTestEnabled(bool enabled);
+		void SetCullMode(D3D11_CULL_MODE cullMode);
+
 	private:
 		bool CreateDeviceAndSwapChain(HWND hWnd);
 		bool CreateRenderTargetView();
@@ -80,7 +89,10 @@ namespace Falu
 		ComPtr<ID3D11RasterizerState> m_wireframeState;//ワイヤーフレーム
 		ComPtr<ID3D11BlendState> m_alphaBlendState;
 		ComPtr<ID3D11SamplerState> m_samplerState;
-		
+		ComPtr<ID3D11RasterizerState> m_cullFrontState;
+		ComPtr<ID3D11RasterizerState> m_cullBackState;
+		ComPtr<ID3D11RasterizerState> m_cullNoneState;
+
 		// 2026/02/17 追加
 		ConstantBuffer<PerObjectConstantBuffer> m_perObjectCB;
 		ConstantBuffer<PerFrameConstantBuffer> m_perFrameCB;
@@ -89,6 +101,7 @@ namespace Falu
 
 		Camera* m_currentCamera;
 		RenderSettings m_settings;
+		Shader* m_outlineShader;
 
 		int m_width;
 		int m_height;

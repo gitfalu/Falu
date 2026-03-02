@@ -10,6 +10,9 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "Light.h"
+#include "Shader.h"
+#include "Scene/GameObject.h"
+#include "Scene/MeshRenderer.h"
 
 namespace Falu
 {
@@ -53,8 +56,25 @@ namespace Falu
 		if (!m_perFrameCB.Initialize(m_device.Get()))
 			return false;
 
-		SetupViewport();
 
+		D3D11_RASTERIZER_DESC rasterizerDesc = {};
+		rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+		rasterizerDesc.CullMode = D3D11_CULL_FRONT;
+		rasterizerDesc.FrontCounterClockwise = FALSE;
+		rasterizerDesc.DepthClipEnable = TRUE;
+
+		HRESULT hr = m_device->CreateRasterizerState(&rasterizerDesc, &m_cullFrontState);
+		if (FAILED(hr))
+			return false;
+
+		rasterizerDesc.CullMode = D3D11_CULL_NONE;
+		hr = m_device->CreateRasterizerState(&rasterizerDesc, &m_cullNoneState);
+		if (FAILED(hr))
+			return false;
+
+		m_cullBackState = m_rasterizerState;
+
+		SetupViewport();
 		return true;
 	}
 
@@ -213,6 +233,99 @@ namespace Falu
 
 		// ƒƒbƒVƒ…‚Ì•`‰æ
 		mesh->Render(m_context.Get());
+	}
+
+	void Renderer::RenderOutline(GameObject* object, const Math::Color& color, float width)
+	{
+		if (!object || !m_outlineShader)
+			return;
+
+		using namespace DirectX;
+
+		auto meshRenderer = object->GetComponent<MeshRenderer>();
+		if (!meshRenderer)
+			return;
+
+		Mesh* mesh = meshRenderer->GetMesh();
+		Material* material = meshRenderer->GetMaterial();
+		if (!mesh || !material)
+			return;
+
+		XMMATRIX worldMatrix = object->GetTransform().GetWorldMatrix();
+		RenderMesh(mesh, material, worldMatrix);
+
+		SetCullMode(D3D11_CULL_FRONT);
+
+		XMMATRIX scaleMatrix = XMMatrixScaling(1.0f + width, 1.0f + width, 1.0f + width);
+		XMMATRIX outlineWorld = scaleMatrix * worldMatrix;
+
+		struct OutlineConstantBuffer
+		{
+			XMFLOAT4X4 world;
+			XMFLOAT4X4 viewProjection;
+			XMFLOAT4 color;
+		};
+
+		OutlineConstantBuffer cb;
+		XMStoreFloat4x4(&cb.world, XMMatrixTranspose(outlineWorld));
+		XMStoreFloat4x4(&cb.viewProjection,
+			XMMatrixTranspose(m_currentCamera->GetViewProjectionMatrix()));
+		cb.color = XMFLOAT4(color.r, color.g, color.b, color.a);
+
+		static ComPtr<ID3D11Buffer> outlineBuffer;
+		if (!outlineBuffer)
+		{
+			D3D11_BUFFER_DESC bufferDesc = {};
+			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+			bufferDesc.ByteWidth = sizeof(OutlineConstantBuffer);
+			bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+			m_device->CreateBuffer(&bufferDesc, nullptr, &outlineBuffer);
+		}
+
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		HRESULT hr = m_context->Map(outlineBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		if (FAILED(hr))
+		{
+			memcpy(mappedResource.pData, &cb, sizeof(OutlineConstantBuffer));
+			m_context->Unmap(outlineBuffer.Get(), 0);
+		}
+		
+		m_outlineShader->Bind(m_context.Get());
+		m_context->VSSetConstantBuffers(0, 1, outlineBuffer.GetAddressOf());
+		m_context->PSSetConstantBuffers(0, 1, outlineBuffer.GetAddressOf());
+
+		mesh->Render(m_context.Get());
+
+		SetCullMode(D3D11_CULL_BACK);
+	}
+
+	void Renderer::SetDepthTestEnabled(bool enabled)
+	{
+		if (enabled)
+		{
+			m_context->OMSetDepthStencilState(m_depthStencilState.Get(), 1);
+		}
+		else
+		{
+			m_context->OMSetDepthStencilState(m_depthDisabledState.Get(), 1);
+		}
+	}
+
+	void Renderer::SetCullMode(D3D11_CULL_MODE cullMode)
+	{
+		switch (cullMode)
+		{
+		case D3D11_CULL_NONE:
+			m_context->RSSetState(m_cullNoneState.Get());
+			break;
+		case D3D11_CULL_FRONT:
+			m_context->RSSetState(m_cullFrontState.Get());
+			break;
+		case D3D11_CULL_BACK:
+			m_context->RSSetState(m_cullBackState.Get());
+			break;
+		}
 	}
 
 	bool Renderer::CreateDeviceAndSwapChain(HWND hWnd)

@@ -10,10 +10,11 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include "Scene/GameObject.h"
+#include "Include/Math/Ray.h"
 
 namespace Falu
 {
-	class GameObject;
 	class Camera;
 
 	/// @brief シーン基底クラス
@@ -28,13 +29,28 @@ namespace Falu
 		virtual void Update(float deltaTime);
 		virtual void Render();
 
+		//=== Management GameObject ===
 		GameObject* CreateGameObject(const std::string& name = "GameObject");
 		void DestroyGameObject(GameObject* gameObject);
 
+		//=== Find System ===
+		GameObject* FindGameObjectByName(const std::string& name);
+		GameObject* FindGameObjectByID(int id);
+		std::vector<GameObject*> FinGameObjectByTag(const std::string& tag);
+
+		template<typename T>
+		std::vector<GameObject*> FindGameObjectWithComponent();
+
+		//=== Management Camera ===
 		void SetMainCamera(Camera* camera) { m_mainCamera = camera; }
 		Camera* GetMainCamera() const { return m_mainCamera; }
 
-		const std::string& GetName() const { return m_name;}
+		//=== Ray Cast ===
+		GameObject* RayCast(const Math::Ray& ray, float maxDistance = 1000.0f);
+		std::vector<GameObject*> RaycastAll(const Math::Ray& ray, float maxDistance = 1000.0f);
+
+		//=== Getter ===
+		const std::string& GetName() const { return m_name; }
 		const std::vector<std::unique_ptr<GameObject>>& GetGameObject() const { return m_gameObjects; }
 
 
@@ -43,6 +59,22 @@ namespace Falu
 		std::vector<std::unique_ptr<GameObject>> m_gameObjects;
 		Camera* m_mainCamera;
 	};
+	//=== Implimentation Template ===
+	template<typename T>
+	inline std::vector<GameObject*> Scene::FindGameObjectWithComponent()
+	{
+		std::vector<GameObject*> results;
+
+		for (const auto& obj : m_gameObjects)
+		{
+			if (obj->GetComponent<T>() != nullptr)
+			{// if obj have component
+				results.push_back(obj.get());// push_back results
+			}
+		}
+
+		return results;
+	}
 
 	/// @brief シーンマネージャークラス
 	class SceneManager

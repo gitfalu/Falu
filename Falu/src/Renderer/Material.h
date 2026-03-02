@@ -10,7 +10,7 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 #include <DirectXMath.h>
-#include "../Include/MathHelper.h"
+#include "Include/Math/MathHelper.h"
 #include <memory>
 
 namespace Falu
