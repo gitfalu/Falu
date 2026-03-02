@@ -377,10 +377,10 @@ namespace Falu
 
 		if (input->IsMouseButtonPressed(MouseButton::Left))
 		{
-			GizmoAxis hoveredAxis = m_gizmo->GetHoveredAxis(ray, selectedObject);
+			GizmoAxis hoveredAxis = m_gizmo->GetHoveredAxis(ray, selectedObject,camera);
 			if (hoveredAxis != GizmoAxis::None)
 			{
-				m_gizmo->OnMouseDown(ray, selectedObject);
+				m_gizmo->OnMouseDown(ray, selectedObject,camera);
 			}
 		}
 		else if (input->IsMouseButtonHeld(MouseButton::Left))
