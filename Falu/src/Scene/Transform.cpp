@@ -96,59 +96,42 @@ namespace Falu
 	}
 	Math::Vector3 Transform::GetForward() const
 	{
-		using namespace DirectX;
-
-		XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYaw(
-			m_rotation.x,
-			m_rotation.y,
-			m_rotation.z
-		);
-
-		XMVECTOR forward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-		forward = XMVector3TransformNormal(forward, rotationMatrix);
-
-		XMFLOAT3 result;
-		XMStoreFloat3(&result, forward);
-
-		return Math::Vector3(result.x, result.y, result.z);
+		return GetDirections().forward;
 	}
 
 	Math::Vector3 Transform::GetRight() const
 	{
-		using namespace DirectX;
-
-		XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYaw(
-			m_rotation.x,
-			m_rotation.y,
-			m_rotation.z
-		);
-
-		XMVECTOR right = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-		right = XMVector3TransformNormal(right, rotationMatrix);
-
-		XMFLOAT3 result;
-		XMStoreFloat3(&result, right);
-
-		return Math::Vector3(result.x, result.y, result.z);
+		return GetDirections().right;
 	}
 
 	Math::Vector3 Transform::GetUp() const
 	{
-		using namespace DirectX;
+		return GetDirections().up;
+	}
 
-		XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYaw(
-			m_rotation.x,
-			m_rotation.y,
-			m_rotation.z
+	Transform::Directions Transform::GetDirections() const
+	{
+		DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(
+			m_rotation.x,m_rotation.y,m_rotation.z
 		);
 
-		XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-		up = XMVector3TransformNormal(up, rotationMatrix);
+		DirectX::XMFLOAT3 f, r, u;
 
-		XMFLOAT3 result;
-		XMStoreFloat3(&result, up);
+		DirectX::XMVECTOR forward = DirectX::XMVector3TransformNormal(
+			DirectX::XMVectorSet(0, 0, 1, 0), rotationMatrix);
+		DirectX::XMVECTOR right = DirectX::XMVector3TransformNormal(
+			DirectX::XMVectorSet(1, 0, 0, 0), rotationMatrix);
+		DirectX::XMVECTOR up = DirectX::XMVector3TransformNormal(
+			DirectX::XMVectorSet(0, 1, 0, 0), rotationMatrix);
 
-		return Math::Vector3(result.x, result.y, result.z);
+		DirectX::XMStoreFloat3(&f, forward);
+		DirectX::XMStoreFloat3(&r, right);
+		DirectX::XMStoreFloat3(&u, up);
+		return {
+			Math::Vector3(f.x, f.y, f.z),
+			Math::Vector3(r.x, r.y, r.z),
+			Math::Vector3(u.x, u.y, u.z)
+		};
 	}
 
 	void Transform::UpdateMatrix()

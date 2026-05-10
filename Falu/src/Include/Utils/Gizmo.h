@@ -94,9 +94,9 @@ namespace Falu
 		Math::Vector3 m_dragStartMouseWorld;
 		Math::Vector3 m_dragPlaneNormal;
 		// Mesh
-		std::unique_ptr<Mesh> m_arrowMesh;
-		std::unique_ptr<Mesh> m_circleMesh;
-		std::unique_ptr<Mesh> m_cubeMesh;
+		std::shared_ptr<Mesh> m_arrowMesh;
+		std::shared_ptr<Mesh> m_circleMesh;
+		std::shared_ptr<Mesh> m_cubeMesh;
 		// Shader
 		Shader* m_shader;
 

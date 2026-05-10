@@ -47,6 +47,14 @@ namespace Falu
 		Math::Vector3 GetRight() const;
 		Math::Vector3 GetUp() const;
 
+		struct Directions
+		{
+			Math::Vector3 forward;
+			Math::Vector3 right;
+			Math::Vector3 up;
+		};
+		Directions GetDirections() const;
+
 	private:
 		void UpdateMatrix();
 

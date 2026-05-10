@@ -158,7 +158,7 @@ namespace Falu
 
 			// Add MeshRenderer
 			auto meshRenderer = newObj->AddComponent<MeshRenderer>();
-			auto mesh = Mesh::CreateCube(device).release();
+			auto mesh = Mesh::CreateCube(device);
 			meshRenderer->SetMesh(mesh);
 
 			// Set tentative Material
@@ -471,7 +471,7 @@ namespace Falu
 			return;
 		}
 		
-		Material* material = meshRenderer->GetMaterial();
+		auto material = meshRenderer->GetMaterial();
 		if (!material)
 		{
 			ImGui::Text("No material assigned");
