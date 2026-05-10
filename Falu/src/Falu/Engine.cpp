@@ -161,7 +161,10 @@ namespace Falu
 		HandleGizmoInput();
 
 		// MouseInput
-		HandleMousePicking();
+		if (!m_gizmo || !m_gizmo->IsDragging())
+		{
+			HandleMousePicking();
+		}
 	}
 
 	void Engine::Render()
@@ -254,6 +257,9 @@ namespace Falu
 
 	void Engine::HandleMousePicking()
 	{
+		// ImGuiがマウスを使用している際はGizmo操作を受け付けない
+		if (ImGui::GetIO().WantCaptureMouse) return;
+
 		auto input = GetInputManager();
 		if (!input) return;
 
@@ -318,23 +324,27 @@ namespace Falu
 
 	void Engine::HandleGizmoInput()
 	{
+		// ImGuiがマウス・キーボードを使用している際はGizmo操作を受け付けない
+		if (ImGui::GetIO().WantCaptureMouse) return;
+		if (ImGui::GetIO().WantCaptureKeyboard) return;
+
 		if (!m_gizmo || !m_imguiManager)
 			return;
 
 		auto input = GetInputManager();
 		if (!input) return;
 
-		if (input->IsKeyPressed(KeyCode::W))
+		if (input->IsKeyPressed(KeyCode::Num1))
 		{
 			m_gizmo->SetMode(GizmoMode::Translate);
 			OutputDebugStringW(L"[Gizmo] Mode: Translate\n");
 		}
-		if (input->IsKeyPressed(KeyCode::E))
+		if (input->IsKeyPressed(KeyCode::Num2))
 		{
 			m_gizmo->SetMode(GizmoMode::Rotate);
 			OutputDebugStringW(L"[Gizmo] Mode: Rotate\n");
 		}
-		if (input->IsKeyPressed(KeyCode::R))
+		if (input->IsKeyPressed(KeyCode::Num3))
 		{
 			m_gizmo->SetMode(GizmoMode::Scale);
 			OutputDebugStringW(L"[Gizmo] Mode: Scale\n");

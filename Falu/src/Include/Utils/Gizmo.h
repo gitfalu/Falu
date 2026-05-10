@@ -77,6 +77,8 @@ namespace Falu
 		void SetSize(float size) { m_size = size; }
 		float GetSize() { return m_size; }
 
+		bool IsDragging() const { return m_isDragging; }
+
 		void SetShader(Shader* shader) { m_shader = shader; }
 		Shader* GetShader() const { return m_shader; }
 
