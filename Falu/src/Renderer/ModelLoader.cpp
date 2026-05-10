@@ -90,7 +90,7 @@ namespace Falu
 		}
 	}
 
-	std::unique_ptr<Mesh> ModelLoader::ProcessMesh(void* meshPtr, const void* scenePtr, ID3D11Device* device)
+	std::shared_ptr<Mesh> ModelLoader::ProcessMesh(void* meshPtr, const void* scenePtr, ID3D11Device* device)
 	{
 		aiMesh* mesh = static_cast<aiMesh*>(meshPtr);
 
@@ -152,7 +152,7 @@ namespace Falu
 		}
 
 		// Create Mesh
-		auto loadedMesh = std::make_unique<Mesh>();
+		auto loadedMesh = std::make_shared<Mesh>();
 		if (!loadedMesh->Initialize(device, vertices, indices))
 		{
 			OutputDebugStringA("[ModelLoader] ERROR: Failed to create mesh\n");
@@ -162,11 +162,11 @@ namespace Falu
 		return loadedMesh;
 	}
 
-	std::unique_ptr<Material> ModelLoader::ProcessMaterial(void* materialPtr, const void* scenePtr, ID3D11Device* device, const std::string& directory)
+	std::shared_ptr<Material> ModelLoader::ProcessMaterial(void* materialPtr, const void* scenePtr, ID3D11Device* device, const std::string& directory)
 	{
 		aiMaterial* material = static_cast<aiMaterial*>(materialPtr);
 
-		auto loadedMaterial = std::make_unique<Material>();
+		auto loadedMaterial = std::make_shared<Material>();
 
 		// albedo (deffuse color)
 		aiColor3D color(1.0f, 1.0f, 1.0f);

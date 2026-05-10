@@ -43,9 +43,9 @@ namespace Falu
 		void ProcessNode(void* nodePtr, const void* scenePtr, ID3D11Device* device,
 			Model* model, const std::string& directory);
 
-		std::unique_ptr<Mesh> ProcessMesh(void* meshPtr, const void* scenePtr, ID3D11Device* device);
+		std::shared_ptr<Mesh> ProcessMesh(void* meshPtr, const void* scenePtr, ID3D11Device* device);
 
-		std::unique_ptr<Material> ProcessMaterial(void* materialPtr, const void* scenePtr,
+		std::shared_ptr<Material> ProcessMaterial(void* materialPtr, const void* scenePtr,
 			ID3D11Device* device, const std::string& directory);
 
 		std::shared_ptr<Texture> LoadTexture(ID3D11Device* device, const std::string& filepath);

@@ -16,6 +16,7 @@
 #include "Scene/MeshRenderer.h"
 #include "Renderer/Mesh.h"
 #include "Renderer/Renderer.h"
+#include "Renderer/Shader.h"
 #include "Renderer/Light.h"
 #include "Renderer/Material.h"
 #include "Renderer/Texture.h"
@@ -220,15 +221,26 @@ namespace Falu
 		if (ImGui::Button("+ Create Cube"))
 		{
 			auto device = Engine::GetInstance().GetRenderer()->GetDevice();
+			auto shader = ShaderManager::GetInstance().GetShader("Basic");
 			GameObject* newObj = scene->CreateGameObject("Cube");
+			newObj->SetTag("Cube");
 
 			// Add MeshRenderer
 			auto meshRenderer = newObj->AddComponent<MeshRenderer>();
 			auto mesh = Mesh::CreateCube(device);
 			meshRenderer->SetMesh(mesh);
+			newObj->SetBounds(mesh->CalculateBounds());
 
 			// Set tentative Material
-			//meshRenderer->SetMaterial();
+			auto material = std::make_shared<Material>();
+			material->Initialize(device);
+			if(shader)
+				material->SetShader(shader);
+			MaterialProperties Mprops;
+			Mprops.albedo = Math::Color(0.8f, 0.8, 0.8, 1.0f);
+			Mprops.roughness = 0.5f;
+			material->SetProperties(Mprops);
+			meshRenderer->SetMaterial(material);
 
 			m_selectedObject = newObj;
 			m_selectedLight = nullptr;
@@ -238,7 +250,7 @@ namespace Falu
 
 		// GameObject List
 		const auto& gameobjects = scene->GetGameObject();
-		ImGui::Text("Objects (&zu):",gameobjects.size());// View All Object Count
+		ImGui::Text("Objects (%zu):",gameobjects.size());// View All Object Count
 
 		for (const auto& obj : gameobjects)
 		{
@@ -413,9 +425,9 @@ namespace Falu
 		if (ImGui::DragFloat3("Rotation", rotation, 1.0f))
 		{
 			transform->SetRotation(
-				Math::ToDegrees(rotation[0]),
-				Math::ToDegrees(rotation[1]),
-				Math::ToDegrees(rotation[2])
+				Math::ToRadians(rotation[0]),
+				Math::ToRadians(rotation[1]),
+				Math::ToRadians(rotation[2])
 			);
 		}
 

@@ -25,14 +25,14 @@ namespace Falu
 		void Render() override;
 
 		// Setting Model
-		void SetModel(Model* model) { m_model = model; }
-		Model* GetModel()const { return m_model; }
+		void SetModel(std::unique_ptr<Model> model) { m_model = std::move(model); }
+		Model* GetModel()const { return m_model.get(); }
 
 		// Load Model
 		bool LoadModel(const std::string& filepath);
 
 	private:
-		Model* m_model;
+		std::unique_ptr<Model> m_model;
 		std::string m_modelPath;
 	};
 }

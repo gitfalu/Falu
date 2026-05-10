@@ -36,11 +36,11 @@ namespace Falu
 		}
 	}
 
-	void Model::AddSubMesh(std::unique_ptr<Mesh> mesh, std::unique_ptr<Material> material, const std::string& name)
+	void Model::AddSubMesh(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, const std::string& name)
 	{
 		SubMesh subMesh;
-		subMesh.mesh = std::move(mesh);
-		subMesh.material = std::move(material);
+		subMesh.mesh = mesh;
+		subMesh.material = material;
 		subMesh.name = name;
 
 		m_subMeshes.push_back(std::move(subMesh));

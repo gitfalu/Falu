@@ -24,8 +24,8 @@ namespace Falu
 	// SubMesh
 	struct SubMesh
 	{
-		std::unique_ptr<Mesh> mesh;
-		std::unique_ptr<Material> material;
+		std::shared_ptr<Mesh> mesh;
+		std::shared_ptr<Material> material;
 		std::string name;
 	};
 
@@ -40,10 +40,13 @@ namespace Falu
 		void Render(ID3D11DeviceContext* context, const DirectX::XMMATRIX& worldMatrix);
 
 		// Add SubMesh
-		void AddSubMesh(std::unique_ptr<Mesh> mesh, std::unique_ptr<Material> material, const std::string& name = "");
+		void AddSubMesh(
+			std::shared_ptr<Mesh> mesh, 
+			std::shared_ptr<Material> material, 
+			const std::string& name = "");
 
 		// Getter
-		const std::vector<SubMesh>& GetSubMesh() const { return m_subMeshes; }
+		const std::vector<SubMesh>& GetSubMeshes() const { return m_subMeshes; }
 		size_t GetSubMeshCount() const { return m_subMeshes.size(); }
 
 		// Bounding Box

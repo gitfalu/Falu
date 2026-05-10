@@ -35,11 +35,19 @@ namespace Falu
 	{
 		if (!m_model) return;
 
+		auto renderer = Engine::GetInstance().GetRenderer();
+		if (!renderer) return;
+
 		DirectX::XMMATRIX worldMatrix = GetOwner()->GetTransform().GetWorldMatrix();
 
-
-		auto context = Engine::GetInstance().GetRenderer()->GetContext();
-		m_model->Render(context, worldMatrix);
+		for (const auto& subMesh : m_model->GetSubMeshes())
+		{
+			if (subMesh.mesh && subMesh.material) {
+				renderer->RenderMesh(subMesh.mesh.get(),
+					subMesh.material.get(),
+					worldMatrix);
+			}
+		}
 	}
 
 	bool ModelRenderer::LoadModel(const std::string& filepath)
@@ -51,7 +59,7 @@ namespace Falu
 
 		if (loadedModel)
 		{
-			m_model = loadedModel.release();
+			m_model = std::move(loadedModel);
 			m_modelPath = filepath;
 
 			// setting bounding box
