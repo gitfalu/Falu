@@ -39,6 +39,6 @@ namespace Falu
 		DirectX::XMMATRIX worldMatrix = m_owner->GetTransform().GetWorldMatrix();
 
 		// ƒƒbƒVƒ…‚Ì•`‰æ
-		renderer->RenderMesh(m_mesh, m_material, worldMatrix);
+		renderer->RenderMesh(m_mesh.get(), m_material.get(), worldMatrix);
 	}
 }

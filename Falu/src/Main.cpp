@@ -82,7 +82,7 @@ public:
 		);
 
 		// ƒ}ƒeƒŠƒAƒ‹‚Ìì¬
-		m_material = new Material();
+		m_material = std::make_shared<Material>();
 		m_material->Initialize(device);
 		m_material->SetShader(m_shader);
 
@@ -103,7 +103,7 @@ public:
 			m_material->SetAlbedoTexture(texture);
 		}
 
-		m_mesh = Mesh::CreateCube(device).release();
+		m_mesh = Mesh::CreateCube(device);
 
 		m_cubeObject = CreateGameObject("Cube");
 		auto meshRenderer = m_cubeObject->AddComponent<MeshRenderer>();
@@ -144,16 +144,14 @@ public:
 
 	void OnUnload()override
 	{
-		delete m_mesh;
-		delete m_material;
 		delete m_camera;
 	}
 
 private:
 	Camera* m_camera = nullptr;
 	Shader* m_shader = nullptr;
-	Material* m_material = nullptr;
-	Mesh* m_mesh = nullptr;
+	std::shared_ptr<Material> m_material = nullptr;
+	std::shared_ptr<Mesh> m_mesh = nullptr;
 	GameObject* m_cubeObject = nullptr;
 };
 
@@ -305,12 +303,12 @@ private:
 		obj->GetTransform().SetPosition(position);
 
 		auto meshRenderer = obj->AddComponent<MeshRenderer>();
-		auto mesh = Mesh::CreateCube(device).release();
+		auto mesh = Mesh::CreateCube(device);
 		meshRenderer->SetMesh(mesh);
 
 		obj->SetBounds(mesh->CalculateBounds());
 
-		auto material = new Material();
+		auto material = std::make_shared<Material>();
 		material->Initialize(device);
 		material->SetShader(shader);
 
@@ -330,10 +328,10 @@ private:
 		obj->GetTransform().SetPosition(position);
 
 		auto meshRenderer = obj->AddComponent<MeshRenderer>();
-		auto mesh = Mesh::CreateSphere(device,32).release();
+		auto mesh = Mesh::CreateSphere(device,32);
 		meshRenderer->SetMesh(mesh);
 
-		auto material = new Material();
+		auto material = std::make_shared<Material>();
 		material->Initialize(device);
 		material->SetShader(shader);
 
@@ -353,10 +351,10 @@ private:
 		obj->GetTransform().SetPosition(position);
 
 		auto meshRenderer = obj->AddComponent<MeshRenderer>();
-		auto mesh = Mesh::CreatePlane(device,10.0f,10.0f,10).release();
+		auto mesh = Mesh::CreatePlane(device,10.0f,10.0f,10);
 		meshRenderer->SetMesh(mesh);
 
-		auto material = new Material();
+		auto material = std::make_shared<Material>();
 		material->Initialize(device);
 		material->SetShader(shader);
 

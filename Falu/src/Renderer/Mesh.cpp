@@ -84,7 +84,7 @@ namespace Falu
 
 	//========= ê}å`çÏê¨ =========
 
-	std::unique_ptr<Mesh> Mesh::CreateTriangle(ID3D11Device* device)
+	std::shared_ptr<Mesh> Mesh::CreateTriangle(ID3D11Device* device)
 	{
 		std::vector<Vertex> vertices =
 		{
@@ -95,7 +95,7 @@ namespace Falu
 
 		std::vector<unsigned int>indices = { 0,1,2 };
 
-		auto mesh = std::make_unique<Mesh>();
+		auto mesh = std::make_shared<Mesh>();
 		if (mesh->Create(device, vertices, indices))
 		{
 			return mesh;
@@ -104,7 +104,7 @@ namespace Falu
 		return nullptr;
 	}
 
-	std::unique_ptr<Mesh> Mesh::CreateQuad(ID3D11Device* device)
+	std::shared_ptr<Mesh> Mesh::CreateQuad(ID3D11Device* device)
 	{
 		std::vector<Vertex> vertices =
 		{
@@ -116,7 +116,7 @@ namespace Falu
 
 		std::vector<unsigned int>indices = { 0,1,2,0,2,3 };
 
-		auto mesh = std::make_unique<Mesh>();
+		auto mesh = std::make_shared<Mesh>();
 		if (mesh->Create(device, vertices, indices))
 		{
 			return mesh;
@@ -125,7 +125,7 @@ namespace Falu
 		return nullptr;
 	}
 
-	std::unique_ptr<Mesh> Mesh::CreateCube(ID3D11Device* device)
+	std::shared_ptr<Mesh> Mesh::CreateCube(ID3D11Device* device)
 	{
 		std::vector<Vertex> vertices =
 		{
@@ -176,7 +176,7 @@ namespace Falu
 			20,21,22,20,22,23 // Left
 		};
 
-		auto mesh = std::make_unique<Mesh>();
+		auto mesh = std::make_shared<Mesh>();
 		if (mesh->Create(device, vertices, indices))
 		{
 			return mesh;
@@ -185,7 +185,7 @@ namespace Falu
 		return nullptr;
 	}
 
-	std::unique_ptr<Mesh> Mesh::CreateSphere(ID3D11Device* device, int segments)
+	std::shared_ptr<Mesh> Mesh::CreateSphere(ID3D11Device* device, int segments)
 	{
 		std::vector<Vertex> vertices;
 		std::vector<unsigned int> indices;
@@ -235,7 +235,7 @@ namespace Falu
 			}
 		}
 
-		auto mesh = std::make_unique<Mesh>();
+		auto mesh = std::make_shared<Mesh>();
 		if (mesh->Create(device, vertices, indices))
 		{
 			return mesh;
@@ -244,7 +244,7 @@ namespace Falu
 		return nullptr;
 	}
 
-	std::unique_ptr<Mesh> Mesh::CreateCylinder(ID3D11Device* device, int segments)
+	std::shared_ptr<Mesh> Mesh::CreateCylinder(ID3D11Device* device, int segments)
 	{
 		std::vector<Vertex> vertices;
 		std::vector<unsigned int> indices;
@@ -289,7 +289,7 @@ namespace Falu
 			indices.push_back(base + 2);
 		}
 
-		auto mesh = std::make_unique<Mesh>();
+		auto mesh = std::make_shared<Mesh>();
 		if (mesh->Create(device, vertices, indices))
 		{
 			return mesh;
@@ -298,7 +298,7 @@ namespace Falu
 		return nullptr;
 	}
 
-	std::unique_ptr<Mesh> Mesh::CreatePlane(ID3D11Device* device, float width, float depth, int division)
+	std::shared_ptr<Mesh> Mesh::CreatePlane(ID3D11Device* device, float width, float depth, int division)
 	{
 		std::vector<Vertex> vertices;
 		std::vector<unsigned int> indices;
@@ -345,7 +345,7 @@ namespace Falu
 			}
 		}
 
-		auto mesh = std::make_unique<Mesh>();
+		auto mesh = std::make_shared<Mesh>();
 		if (mesh->Create(device, vertices, indices))
 		{
 			return mesh;

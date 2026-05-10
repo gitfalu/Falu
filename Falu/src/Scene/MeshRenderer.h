@@ -22,14 +22,14 @@ namespace Falu
 
 		void Render() override;
 
-		void SetMesh(Mesh* mesh) { m_mesh = mesh; }
-		void SetMaterial(Material* material) { m_material = material; }
+		void SetMesh(std::shared_ptr<Mesh> mesh) { m_mesh = mesh; }
+		void SetMaterial(std::shared_ptr<Material> material) { m_material = material; }
 
-		Mesh* GetMesh() const { return m_mesh; }
-		Material* GetMaterial() const { return m_material; }
+		std::shared_ptr<Mesh> GetMesh() const { return m_mesh; }
+		std::shared_ptr<Material> GetMaterial() const { return m_material; }
 
 	private:
-		Mesh* m_mesh;
-		Material* m_material;
+		std::shared_ptr<Mesh> m_mesh;
+		std::shared_ptr<Material> m_material;
 	};
 }

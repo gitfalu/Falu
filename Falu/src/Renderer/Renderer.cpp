@@ -246,13 +246,13 @@ namespace Falu
 		if (!meshRenderer)
 			return;
 
-		Mesh* mesh = meshRenderer->GetMesh();
-		Material* material = meshRenderer->GetMaterial();
+		auto mesh = meshRenderer->GetMesh();
+		auto material = meshRenderer->GetMaterial();
 		if (!mesh || !material)
 			return;
 
 		XMMATRIX worldMatrix = object->GetTransform().GetWorldMatrix();
-		RenderMesh(mesh, material, worldMatrix);
+		RenderMesh(mesh.get(), material.get(), worldMatrix);
 
 		SetCullMode(D3D11_CULL_FRONT);
 
