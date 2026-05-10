@@ -205,14 +205,14 @@ public:
 		);
 
 		// Create Multiple Cube
-		CreateCube(device, shader, "RedCube", Math::Vector3(-3, 0, 0), Math::Color(1, 0, 0, 1));
-		CreateCube(device, shader, "GreenCube", Math::Vector3(0, 0, 0), Math::Color(0, 1, 0, 1));
-		CreateCube(device, shader, "BlueCube", Math::Vector3(3, 0, 0), Math::Color(0, 0, 1, 1));
+		m_redCube = CreateCube(device, shader, "RedCube", Math::Vector3(-3, 0, 0), Math::Color(1, 0, 0, 1));
+		m_greenCube = CreateCube(device, shader, "GreenCube", Math::Vector3(0, 0, 0), Math::Color(0, 1, 0, 1));
+		m_blueCube = CreateCube(device, shader, "BlueCube", Math::Vector3(3, 0, 0), Math::Color(0, 0, 1, 1));
 
 		// Create Multiple Sphere
-		CreateSphere(device, shader, "YellowSphere", Math::Vector3(-3, 2, 0), Math::Color(1,1, 0, 1));
-		CreateSphere(device, shader, "CyanSphere", Math::Vector3(0, 2, 0), Math::Color(0,1, 1, 1));
-		CreateSphere(device, shader, "MagentaSphere", Math::Vector3(3, 2, 0), Math::Color(1,0, 1, 1));
+		m_yellowSphere = CreateSphere(device, shader, "YellowSphere", Math::Vector3(-3, 2, 0), Math::Color(1,1, 0, 1));
+		m_cyanSphere = CreateSphere(device, shader, "CyanSphere", Math::Vector3(0, 2, 0), Math::Color(0,1, 1, 1));
+		m_magentaSphere = CreateSphere(device, shader, "MagentaSphere", Math::Vector3(3, 2, 0), Math::Color(1,0, 1, 1));
 
 		// Create Ground
 		CreatePlane(device, shader, "Ground", Math::Vector3(0, -1, 0), Math::Color(0.3f, 0.3f, 0.3f, 1));
@@ -245,57 +245,49 @@ public:
 		static float time = 0.0f;
 		time += deltaTime;
 
-		GameObject* redCube = FindGameObjectByName("RedCube");
-		if (redCube)
-		{
-			redCube->GetTransform().SetRotation(0, time, 0);
-		}
+		if(m_redCube)
+			m_redCube->GetTransform().SetRotation(0, time, 0);
 
-		GameObject* greenCube = FindGameObjectByName("GreenCube");
-		if (greenCube)
-		{
-			greenCube->GetTransform().SetRotation(time, 0, 0);
-		}
+		if(m_greenCube)
+			m_greenCube->GetTransform().SetRotation(time, 0, 0);
 
-		GameObject* blueCube = FindGameObjectByName("BlueCube");
-		if (blueCube)
-		{
-			blueCube->GetTransform().SetRotation(0, 0, time);
-		}
+		if(m_blueCube)
+			m_blueCube->GetTransform().SetRotation(0, 0, time);
 
 		// Float Sphere
-		GameObject* yellowSphere = FindGameObjectByName("YellowSphere");
-		if (yellowSphere)
+		if (m_yellowSphere)
 		{
-			Math::Vector3 pos = yellowSphere->GetTransform().GetPosition();
-			pos.y = 2.0f + sinf(time * 2.0f) * 0.5f;
-			yellowSphere->GetTransform().SetPosition(pos);
+			Math::Vector3 pos = m_yellowSphere->GetTransform().GetPosition();
+				pos.y = 2.0f + sinf(time * 2.0f) * 0.5f;
+				m_yellowSphere->GetTransform().SetPosition(pos);
 		}
 
-		GameObject* cyanSphere = FindGameObjectByName("CyanSphere");
-		if (cyanSphere)
+		if (m_cyanSphere)
 		{
-			Math::Vector3 pos = cyanSphere->GetTransform().GetPosition();
+			Math::Vector3 pos = m_cyanSphere->GetTransform().GetPosition();
 			pos.y = 2.0f + sinf(time * 2.0f + 2.0f) * 0.5f;
-			cyanSphere->GetTransform().SetPosition(pos);
+			m_cyanSphere->GetTransform().SetPosition(pos);
 		}
 
-		GameObject* magentaSphere = FindGameObjectByName("MagentaSphere");
-		if (magentaSphere)
+		if (m_magentaSphere)
 		{
-			Math::Vector3 pos = magentaSphere->GetTransform().GetPosition();
-			pos.y = 2.0f + sinf(time * 2.0f + 4.0f) * 0.5f;
-			magentaSphere->GetTransform().SetPosition(pos);
+			Math::Vector3 pos = m_magentaSphere->GetTransform().GetPosition();
+				pos.y = 2.0f + sinf(time * 2.0f + 4.0f) * 0.5f;
+				m_magentaSphere->GetTransform().SetPosition(pos);
 		}
 	}
 
 	void OnUnload() override
 	{
 		delete m_camera;
+		m_camera = nullptr;
+
+		m_redCube = m_greenCube = m_blueCube = nullptr;
+		m_yellowSphere = m_cyanSphere = m_magentaSphere = nullptr;
 	}
 
 private:
-	void CreateCube(ID3D11Device* device, Shader* shader, const std::string& name,
+	GameObject* CreateCube(ID3D11Device* device, Shader* shader, const std::string& name,
 		const Math::Vector3& position, const Math::Color& color)
 	{
 		GameObject* obj = CreateGameObject(name);
@@ -318,9 +310,11 @@ private:
 		material->SetProperties(props);
 
 		meshRenderer->SetMaterial(material);
+
+		return obj;
 	}
 
-	void CreateSphere(ID3D11Device* device, Shader* shader, const std::string& name,
+	GameObject* CreateSphere(ID3D11Device* device, Shader* shader, const std::string& name,
 		const Math::Vector3& position, const Math::Color& color)
 	{
 		GameObject* obj = CreateGameObject(name);
@@ -341,6 +335,8 @@ private:
 		material->SetProperties(props);
 
 		meshRenderer->SetMaterial(material);
+
+		return obj;
 	}
 
 	void CreatePlane(ID3D11Device* device, Shader* shader, const std::string& name,
@@ -367,6 +363,12 @@ private:
 	}
 private:
 	Camera* m_camera = nullptr;
+	GameObject* m_redCube = nullptr;
+	GameObject* m_greenCube = nullptr;
+	GameObject* m_blueCube = nullptr;
+	GameObject* m_yellowSphere = nullptr;
+	GameObject* m_cyanSphere = nullptr;
+	GameObject* m_magentaSphere = nullptr;
 };
 
 /// @brief エントリーポイント
