@@ -26,7 +26,7 @@ namespace Falu
 				: origin(origin), direction(direction) {}
 
 			// Set Position in Param
-			Vector3 GetPoint(float t) const
+			inline Vector3 GetPoint(float t) const
 			{
 				return Vector3(
 					origin.x + direction.x * t,
@@ -46,7 +46,7 @@ namespace Falu
 			AABB(const Vector3& min, const Vector3& max) : min(min), max(max) {}
 
 			// Coordinate Center
-			Vector3 GetCenter() const
+			inline Vector3 GetCenter() const
 			{
 				return Vector3(
 					(min.x + max.x) * 0.5f,
@@ -56,7 +56,7 @@ namespace Falu
 			}
 
 			// Size
-			Vector3 GetSize() const
+			inline Vector3 GetSize() const
 			{
 				return Vector3(
 					max.x - min.x,
@@ -66,7 +66,7 @@ namespace Falu
 			}
 
 			// included point/vertex
-			bool Contains(const Vector3& point) const
+			inline bool Contains(const Vector3& point) const
 			{
 				return (point.x >= min.x && point.x <= max.x &&
 						point.y >= min.y && point.y <= max.y &&
@@ -74,7 +74,7 @@ namespace Falu
 			}
 
 			// Judge Crossed AABB
-			bool Intersects(const AABB& other) const
+			inline bool Intersects(const AABB& other) const
 			{
 				return (min.x <= other.max.x && max.x >= other.min.x &&
 						min.y <= other.max.y && max.y >= other.min.y &&
@@ -82,7 +82,7 @@ namespace Falu
 			}
 
 			// Jedge Crossed Ray (Slab)
-			bool IntersectsRay(const Ray& ray, float& tMin, float& tMax)const
+			inline bool IntersectsRay(const Ray& ray, float& tMin, float& tMax)const
 			{
 				tMin = 0.0f;
 				tMax = FLT_MAX;
@@ -145,7 +145,7 @@ namespace Falu
 			}
 
 			// AABB After Apply Transform
-			AABB Transform(const DirectX::XMMATRIX& matrix) const
+			inline AABB Transform(const DirectX::XMMATRIX& matrix) const
 			{
 				using namespace DirectX;
 
