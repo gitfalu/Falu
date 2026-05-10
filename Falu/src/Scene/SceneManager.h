@@ -36,7 +36,7 @@ namespace Falu
 		//=== Find System ===
 		GameObject* FindGameObjectByName(const std::string& name);
 		GameObject* FindGameObjectByID(int id);
-		std::vector<GameObject*> FinGameObjectByTag(const std::string& tag);
+		std::vector<GameObject*> FindGameObjectByTag(const std::string& tag);
 
 		template<typename T>
 		std::vector<GameObject*> FindGameObjectWithComponent();

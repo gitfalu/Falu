@@ -48,6 +48,25 @@ namespace Falu
 			return value;
 		}
 
+		struct Vector2
+		{
+			float x, y;
+
+			Vector2() :x(0.0f), y(0.0f){}
+			Vector2(float x, float y) :x(x), y(y){}
+
+			XMFLOAT2 ToXMFLOAT2() const { return XMFLOAT2(x, y); }
+			XMVECTOR ToXMVECTOR() const {
+				XMFLOAT2 stack = ToXMFLOAT2();
+				return XMLoadFloat2(&stack);
+			}
+
+			static Vector2 Zero()		{ return Vector2(0.0f, 0.0f); }
+			static Vector2 One()		{ return Vector2(1.0f, 1.0f); }
+			static Vector2 Up()			{ return Vector2(0.0f, 1.0f); }
+			static Vector2 Right()		{ return Vector2(1.0f, 0.0f); }
+		};
+
 		struct Vector3
 		{
 			float x, y, z;

@@ -29,7 +29,7 @@ namespace Falu
 	 * 
 	 */
 
-	LightManager& LightManager::GetInstace()
+	LightManager& LightManager::GetInstance()
 	{
 		static LightManager instance;
 		return instance;

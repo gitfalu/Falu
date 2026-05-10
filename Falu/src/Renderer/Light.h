@@ -65,7 +65,7 @@ namespace Falu
 	class LightManager
 	{
 	public:
-		static LightManager& GetInstace();
+		static LightManager& GetInstance();
 
 		Light* CreateLight(LightType type = LightType::Directional);
 		void RemoveLight(Light* light);

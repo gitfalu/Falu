@@ -22,12 +22,17 @@ namespace Falu
 		Release();
 	}
 
-	bool Mesh::Create(ID3D11Device* device, const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indicecs)
+	bool Mesh::Initialize(ID3D11Device* device, const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices)
+	{
+		return Create(device,vertices,indices);
+	}
+
+	bool Mesh::Create(ID3D11Device* device, const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices)
 	{
 		m_vertices = vertices;
-		m_indices = indicecs;
+		m_indices = indices;
 		m_vertexCount = static_cast<unsigned int>(vertices.size());
-		m_indexCount = static_cast<unsigned int>(indicecs.size());
+		m_indexCount = static_cast<unsigned int>(indices.size());
 
 		// 頂点バッファの作成
 		D3D11_BUFFER_DESC vertexBufferDesc = {};
@@ -51,7 +56,7 @@ namespace Falu
 		indexBufferDesc.CPUAccessFlags = 0;
 
 		D3D11_SUBRESOURCE_DATA indexData = {};
-		indexData.pSysMem = indicecs.data();
+		indexData.pSysMem = indices.data();
 
 		hr = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
 		return SUCCEEDED(hr);
@@ -83,9 +88,9 @@ namespace Falu
 	{
 		std::vector<Vertex> vertices =
 		{
-			{ Math::Vector3( 0.0f, 0.5f, 0.0f), Math::Vector3(0.0f, 0.0f, -1.0f), { 0.5f,0.0f }, Math::Vector4(1.0f, 0.0f, 0.0f, 1.0f) },
-			{ Math::Vector3( 0.5f,-0.5f, 0.0f), Math::Vector3(0.0f, 0.0f, -1.0f), {	1.0f,1.0f }, Math::Vector4(0.0f, 1.0f, 0.0f, 1.0f) },
-			{ Math::Vector3(-0.5f,-0.5f, 0.0f), Math::Vector3(0.0f, 0.0f, -1.0f), { 0.0f,1.0f }, Math::Vector4(0.0f, 0.0f, 1.0f, 1.0f) }
+			{ Math::Vector3( 0.0f, 0.5f, 0.0f), Math::Vector3(0.0f, 0.0f, -1.0f), { 0.5f,0.0f }, Math::Color(1.0f, 0.0f, 0.0f, 1.0f) },
+			{ Math::Vector3( 0.5f,-0.5f, 0.0f), Math::Vector3(0.0f, 0.0f, -1.0f), {	1.0f,1.0f }, Math::Color(0.0f, 1.0f, 0.0f, 1.0f) },
+			{ Math::Vector3(-0.5f,-0.5f, 0.0f), Math::Vector3(0.0f, 0.0f, -1.0f), { 0.0f,1.0f }, Math::Color(0.0f, 0.0f, 1.0f, 1.0f) }
 		};
 
 		std::vector<unsigned int>indices = { 0,1,2 };
@@ -103,10 +108,10 @@ namespace Falu
 	{
 		std::vector<Vertex> vertices =
 		{
-			{ Math::Vector3(-0.5f, 0.5f, 0.0f), Math::Vector3(0.0f, 0.0f, -1.0f), { 0.5f,0.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3( 0.5f, 0.5f, 0.0f), Math::Vector3(0.0f, 0.0f, -1.0f), {	1.0f,0.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3( 0.5f,-0.5f, 0.0f), Math::Vector3(0.0f, 0.0f, -1.0f), {	1.0f,1.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3(-0.5f,-0.5f, 0.0f), Math::Vector3(0.0f, 0.0f, -1.0f), { 0.0f,1.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) }
+			{ Math::Vector3(-0.5f, 0.5f, 0.0f), Math::Vector3(0.0f, 0.0f, -1.0f), { 0.5f,0.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3( 0.5f, 0.5f, 0.0f), Math::Vector3(0.0f, 0.0f, -1.0f), {	1.0f,0.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3( 0.5f,-0.5f, 0.0f), Math::Vector3(0.0f, 0.0f, -1.0f), {	1.0f,1.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3(-0.5f,-0.5f, 0.0f), Math::Vector3(0.0f, 0.0f, -1.0f), { 0.0f,1.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) }
 		};
 
 		std::vector<unsigned int>indices = { 0,1,2,0,2,3 };
@@ -125,40 +130,40 @@ namespace Falu
 		std::vector<Vertex> vertices =
 		{
 			// Front
-			{ Math::Vector3(-0.5f,-0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 0.0f,1.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3(-0.5f, 0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	0.0f,0.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3( 0.5f, 0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	1.0f,0.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3( 0.5f,-0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 1.0f,1.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3(-0.5f,-0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 0.0f,1.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3(-0.5f, 0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	0.0f,0.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3( 0.5f, 0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	1.0f,0.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3( 0.5f,-0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 1.0f,1.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
 
 			// Back
-			{ Math::Vector3( 0.5f,-0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 0.0f,1.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3( 0.5f, 0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	0.0f,0.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3(-0.5f, 0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	1.0f,0.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3(-0.5f,-0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 1.0f,1.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3( 0.5f,-0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 0.0f,1.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3( 0.5f, 0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	0.0f,0.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3(-0.5f, 0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	1.0f,0.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3(-0.5f,-0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 1.0f,1.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
 
 			// Top
-			{ Math::Vector3(-0.5f, 0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 0.0f,1.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3(-0.5f, 0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	0.0f,0.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3( 0.5f, 0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	1.0f,0.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3( 0.5f, 0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 1.0f,1.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3(-0.5f, 0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 0.0f,1.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3(-0.5f, 0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	0.0f,0.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3( 0.5f, 0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	1.0f,0.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3( 0.5f, 0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 1.0f,1.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
 
 			// Bottom
-			{ Math::Vector3(-0.5f,-0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 0.0f,1.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3(-0.5f,-0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	0.0f,0.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3( 0.5f,-0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	1.0f,0.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3( 0.5f,-0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 1.0f,1.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3(-0.5f,-0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 0.0f,1.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3(-0.5f,-0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	0.0f,0.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3( 0.5f,-0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	1.0f,0.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3( 0.5f,-0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 1.0f,1.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
 
 			// Right
-			{ Math::Vector3( 0.5f,-0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 0.0f,1.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3( 0.5f, 0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	0.0f,0.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3( 0.5f, 0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	1.0f,0.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3( 0.5f,-0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 1.0f,1.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3( 0.5f,-0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 0.0f,1.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3( 0.5f, 0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	0.0f,0.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3( 0.5f, 0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	1.0f,0.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3( 0.5f,-0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 1.0f,1.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
 
 			// Left
-			{ Math::Vector3(-0.5f,-0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 0.0f,1.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3(-0.5f, 0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	0.0f,0.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3(-0.5f, 0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	1.0f,0.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) },
-			{ Math::Vector3(-0.5f,-0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 1.0f,1.0f }, Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f) }
+			{ Math::Vector3(-0.5f,-0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 0.0f,1.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3(-0.5f, 0.5f, 0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	0.0f,0.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3(-0.5f, 0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), {	1.0f,0.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) },
+			{ Math::Vector3(-0.5f,-0.5f,-0.5f), Math::Vector3(0.0f, 0.0f, -1.0f), { 1.0f,1.0f }, Math::Color(1.0f, 1.0f, 1.0f, 1.0f) }
 		};
 
 		std::vector<unsigned int>indices = 
@@ -207,8 +212,8 @@ namespace Falu
 				Vertex vertex;
 				vertex.position = Math::Vector3(x, y, z);
 				vertex.normal = Math::Vector3(x, y, z);
-				vertex.texCoord = DirectX::XMFLOAT2(u, v);
-				vertex.color = Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+				vertex.texCoord = Math::Vector2(u, v);
+				vertex.color = Math::Color(1.0f, 1.0f, 1.0f, 1.0f);
 
 				vertices.push_back(vertex);
 			}
@@ -259,16 +264,16 @@ namespace Falu
 			vertices.push_back({
 				Math::Vector3(x, height / 2.0f,z),
 				Math::Vector3(x / radius, 0,z/radius),
-				DirectX::XMFLOAT2(static_cast<float>(i) / segments,0.0f),
-				Math::Vector4(1.0f,1.0f,1.0f,1.0f)
+				Math::Vector2(static_cast<float>(i) / segments,0.0f),
+				Math::Color(1.0f,1.0f,1.0f,1.0f)
 				});
 
 			// 下部
 			vertices.push_back({
 				Math::Vector3(x, -height / 2.0f,z),
 				Math::Vector3(x / radius, 0,z / radius),
-				DirectX::XMFLOAT2(static_cast<float>(i) / segments,1.0f),
-				Math::Vector4(1.0f,1.0f,1.0f,1.0f)
+				Math::Vector2(static_cast<float>(i) / segments,1.0f),
+				Math::Color(1.0f,1.0f,1.0f,1.0f)
 				});
 		}
 
@@ -311,11 +316,11 @@ namespace Falu
 				Vertex vertex;
 				vertex.position = Math::Vector3(xPos, 0.0f, zPos);
 				vertex.normal = Math::Vector3(0.0f, 1.0f, 0.0f);
-				vertex.texCoord = DirectX::XMFLOAT2(
+				vertex.texCoord = Math::Vector2(
 					static_cast<float>(x) / division,
 					static_cast<float>(z) / division
 				);
-				vertex.color = Math::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+				vertex.color = Math::Color(1.0f, 1.0f, 1.0f, 1.0f);
 
 				vertices.push_back(vertex);
 			}

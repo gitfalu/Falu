@@ -257,6 +257,8 @@ namespace Falu
 		auto input = GetInputManager();
 		if (!input) return;
 
+		if (m_gizmoClicked) return;
+
 		// Left Click
 		if (input->IsMouseButtonPressed(MouseButton::Left))
 		{
@@ -291,7 +293,7 @@ namespace Falu
 			{
 				char msg[256];
 				sprintf_s(msg, "[Engine] Clicked: %s (ID:%d)\n",
-					hitObject->GetName(),
+					hitObject->GetName().c_str(),
 					hitObject->GetID()
 					);
 				OutputDebugStringA(msg);
@@ -320,12 +322,7 @@ namespace Falu
 			return;
 
 		auto input = GetInputManager();
-		if (!input)
-			return;
-
-		GameObject* selectedObject = m_imguiManager->GetSelectedObject();
-		if (!selectedObject)
-			return;
+		if (!input) return;
 
 		if (input->IsKeyPressed(KeyCode::W))
 		{
@@ -358,8 +355,13 @@ namespace Falu
 			}
 		}
 
+		GameObject* selectedObject = m_imguiManager->GetSelectedObject();
+		if (!selectedObject)
+			return;
+
 		// Mouse Control
 		MouseState mouseState = input->GetMouseState();
+
 		auto scene = m_sceneManager->GetCurrentScene();
 		if (!scene)
 			return;
@@ -381,6 +383,7 @@ namespace Falu
 			if (hoveredAxis != GizmoAxis::None)
 			{
 				m_gizmo->OnMouseDown(ray, selectedObject,camera);
+				m_gizmoClicked = true;
 			}
 		}
 		else if (input->IsMouseButtonHeld(MouseButton::Left))
@@ -390,6 +393,8 @@ namespace Falu
 		else if (input->IsMouseButtonReleased(MouseButton::Left))
 		{
 			m_gizmo->OnMouseUp();
+
+			m_gizmoClicked = false;
 		}
 
 	}

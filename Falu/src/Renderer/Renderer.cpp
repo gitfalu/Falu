@@ -185,7 +185,7 @@ namespace Falu
 		m_perObjectCB.BindVS(m_context.Get(), 0);
 
 		// Light定数バッファの更新
-		auto& lights = LightManager::GetInstace().GetLights();
+		auto& lights = LightManager::GetInstance().GetLights();
 		if (!lights.empty() && lights[0]->IsEnabled())
 		{
 			Light* light = lights[0].get();

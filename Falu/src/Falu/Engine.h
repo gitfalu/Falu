@@ -34,7 +34,7 @@ namespace Falu
 		Window* GetWindow() const { return m_window.get(); }
 		InputManager* GetInputManager() const { return m_inputManager.get(); }
 		SceneManager* GetSceneManager() const { return m_sceneManager.get(); }
-		TimeManager* GetTimaManager() const { return m_timeManager.get(); }
+		TimeManager* GetTimeManager() const { return m_timeManager.get(); }
 
 		bool IsRunning() const { return m_isRunning; }
 		void Quit() { m_isRunning = false; }
@@ -65,6 +65,8 @@ namespace Falu
 
 		// ImGui menber
 		std::unique_ptr<ImGuiManager> m_imguiManager;
+
+		bool m_gizmoClicked;
 
 		// Debug Window flags
 		bool m_showDebugWindow = true;

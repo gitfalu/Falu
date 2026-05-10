@@ -45,7 +45,7 @@ public:
 		Engine::GetInstance().GetRenderer()->SetCamera(m_camera);
 
 		// ƒ‰ƒCƒg‚Ìì¬
-		Light* mainLight = LightManager::GetInstace().CreateLight(LightType::Directional);
+		Light* mainLight = LightManager::GetInstance().CreateLight(LightType::Directional);
 		mainLight->SetColor(Math::Color(1.0f, 1.0f, 1.0f, 1.0f));
 		mainLight->SetIntensity(1.0f);
 		mainLight->GetTransform().SetRotation(
@@ -181,7 +181,7 @@ public:
 		Engine::GetInstance().GetRenderer()->SetCamera(m_camera);
 
 		// Create Light
-		Light* mainLight = LightManager::GetInstace().CreateLight(LightType::Directional);
+		Light* mainLight = LightManager::GetInstance().CreateLight(LightType::Directional);
 		mainLight->SetColor(Math::Color(1.0f, 1.0f, 1.0f, 1.0f));
 		mainLight->SetIntensity(1.0f);
 		mainLight->GetTransform().SetRotation(

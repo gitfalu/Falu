@@ -346,7 +346,7 @@ namespace Falu
 		case Falu::GizmoMode::Rotate:
 		{
 			float distX;
-			if (RayIntersectsAxis(ray, position, Math::Vector3(1, 0, 0), adjustedSize, threshold, distX))
+			if (RayIntersectsCircle(ray, position, Math::Vector3(1, 0, 0), adjustedSize, threshold, distX))
 			{
 				if (distX < minDistance)
 				{
@@ -355,7 +355,7 @@ namespace Falu
 				}
 			}
 			float distY;
-			if (RayIntersectsAxis(ray, position, Math::Vector3(0, 1, 0), adjustedSize, threshold, distY))
+			if (RayIntersectsCircle(ray, position, Math::Vector3(0, 1, 0), adjustedSize, threshold, distY))
 			{
 				if (distY < minDistance)
 				{
@@ -365,7 +365,7 @@ namespace Falu
 			}
 
 			float distZ;
-			if (RayIntersectsAxis(ray, position, Math::Vector3(0, 0, 1), adjustedSize, threshold, distZ))
+			if (RayIntersectsCircle(ray, position, Math::Vector3(0, 0, 1), adjustedSize, threshold, distZ))
 			{
 				if (distZ < minDistance)
 				{
@@ -468,13 +468,76 @@ namespace Falu
 	void Gizmo::RenderRotationGizmo(ID3D11DeviceContext* context, Camera* camera, 
 		const Math::Vector3& position, const DirectX::XMMATRIX& rotation)
 	{
+		using namespace DirectX;
 
+		Math::Vector3 camPos = camera->GetTransform().GetPosition();
+		float distance = sqrtf(
+			(position.x - camPos.x) * (position.x - camPos.x) + 
+			(position.y - camPos.y) * (position.y - camPos.y) + 
+			(position.z - camPos.z) * (position.z - camPos.z)
+		);
+		float adjustedSize = m_size * distance * 0.15f;
+
+		// X Circle - YZ
+		
+		Math::Color xColor = (m_selectedAxis == GizmoAxis::X) ? Math::Color(1, 1, 0, 1) : Math::Color(1, 0, 0, 1);
+		RenderCircle(context, camera, position, Math::Vector3(1, 0, 0), xColor, adjustedSize);
+
+		// Y Circle - XZ
+		Math::Color yColor = (m_selectedAxis == GizmoAxis::Y) ? Math::Color(1, 1, 0, 1) : Math::Color(0, 1, 0, 1);
+		RenderCircle(context, camera, position, Math::Vector3(0, 1, 0), yColor, adjustedSize);
+
+		// Z Circle - XY
+		Math::Color zColor = (m_selectedAxis == GizmoAxis::Z) ? Math::Color(1, 1, 0, 1) : Math::Color(0, 0, 1, 1);
+		RenderCircle(context, camera, position, Math::Vector3(0, 0, 1), zColor, adjustedSize);
 	}
 
 	void Gizmo::RenderScaleGizmo(ID3D11DeviceContext* context, Camera* camera, 
 		const Math::Vector3& position, const DirectX::XMMATRIX& rotation)
 	{
+		using namespace DirectX;
 
+		Math::Vector3 camPos = camera->GetTransform().GetPosition();
+		float distance = sqrtf(
+			(position.x - camPos.x) * (position.x - camPos.x) + 
+			(position.y - camPos.y) * (position.y - camPos.y) + 
+			(position.z - camPos.z) * (position.z - camPos.z)
+		);
+		float adjustedSize = m_size * distance * 0.1f;
+
+		// X Red
+		XMVECTOR xDir = XMVector3TransformNormal(XMVectorSet(1, 0, 0, 0), rotation);
+		XMFLOAT3 xDirFloat;
+		XMStoreFloat3(&xDirFloat, xDir);
+
+		Math::Color xColor = (m_selectedAxis == GizmoAxis::X) ? Math::Color(1, 1, 0, 1) : Math::Color(1,0,0,1);
+		RenderScaleAxis(context, camera, position, Math::Vector3(xDirFloat.x, xDirFloat.y, xDirFloat.z),
+			xColor,adjustedSize);
+
+		// Y Green
+		XMVECTOR yDir = XMVector3TransformNormal(XMVectorSet(0, 1, 0, 0), rotation);
+		XMFLOAT3 yDirFloat;
+		XMStoreFloat3(&yDirFloat, yDir);
+
+		Math::Color yColor = (m_selectedAxis == GizmoAxis::Y) ? Math::Color(1, 1, 0, 1) : Math::Color(0, 1, 0, 1);
+		RenderScaleAxis(context, camera, position, Math::Vector3(yDirFloat.x, yDirFloat.y, yDirFloat.z),
+			yColor, adjustedSize);
+
+		// Z Blue
+		XMVECTOR zDir = XMVector3TransformNormal(XMVectorSet(0, 0, 1, 0), rotation);
+		XMFLOAT3 zDirFloat;
+		XMStoreFloat3(&zDirFloat, zDir);
+
+		Math::Color zColor = (m_selectedAxis == GizmoAxis::Z) ? Math::Color(1, 1, 0, 1) : Math::Color(0, 0, 1, 1);
+		RenderScaleAxis(context, camera, position, Math::Vector3(zDirFloat.x, zDirFloat.y, zDirFloat.z),
+			zColor, adjustedSize);
+
+		if (m_cubeMesh)
+		{
+			Math::Color centerColor = (m_selectedAxis == GizmoAxis::XYZ) ?
+				Math::Color(1, 1, 0, 1) : Math::Color(1, 1, 1, 1);
+			RenderCube(context, camera, position, centerColor, adjustedSize * 0.1f);
+		}
 	}
 
 	void Gizmo::RenderAxis(ID3D11DeviceContext* context, Camera* camera, 
@@ -557,18 +620,173 @@ namespace Falu
 
 	void Gizmo::RenderCircle(ID3D11DeviceContext* context, Camera* camera, const Math::Vector3& position, const Math::Vector3& normal, const Math::Color& color, float radius)
 	{
+		using namespace DirectX;
+
+		if (!m_shader) return;
+
+		const int segments = 32;
+		std::vector<Math::Vector3> points;
+
+		// Render Circle with Line
+		XMVECTOR normalVec = XMVectorSet(normal.x, normal.y, normal.z, 0);
+		XMVECTOR up = XMVectorSet(0, 1, 0, 0);
+
+		if (fabs(normal.y) > 0.999f)
+		{
+			up = XMVectorSet(1, 0, 0, 0);
+		}
+
+		XMVECTOR tangent1 = XMVector3Cross(normalVec, up);
+		tangent1 = XMVector3Normalize(tangent1);
+		XMVECTOR tangent2 = XMVector3Cross(normalVec, tangent1);
+		tangent2 = XMVector3Normalize(tangent2);
+
+		XMFLOAT3 t1, t2;
+		XMStoreFloat3(&t1, tangent1);
+		XMStoreFloat3(&t2, tangent2);
+
+		for (int i = 0; i <= segments; ++i)
+		{
+			float angle = (float)i / segments * Math::TWO_PI;
+			float x = cosf(angle) * radius;
+			float y = sinf(angle) * radius;
+
+			Math::Vector3 point = Math::Vector3(
+				position.x + t1.x * x + t2.x * y,
+				position.y + t1.y * x + t2.y * y,
+				position.z + t1.z * x + t2.z * y
+			);
+			points.push_back(point);
+		}
+
+		for (size_t i = 0; i < points.size() - 1; ++i)
+		{
+			RenderLine(context, camera, points[i], points[i + 1], color, 0.02f);
+		}
 	}
 
 	void Gizmo::RenderScaleAxis(ID3D11DeviceContext* context, Camera* camera, const Math::Vector3& position, const Math::Vector3& direction, const Math::Color& color, float length)
 	{
+		using namespace DirectX;
+
+		if (!m_arrowMesh || !m_cubeMesh || !m_shader) return;
+
+		Math::Vector3 endPos = Math::Vector3(
+			position.x + direction.x * length,
+			position.y + direction.y * length,
+			position.z + direction.z * length
+		);
+
+		RenderLine(context, camera, position, endPos, color, 0.02f);
+
+		RenderCube(context, camera, endPos, color, length * 0.08f);
 	}
 
 	void Gizmo::RenderLine(ID3D11DeviceContext* context, Camera* camera, const Math::Vector3& start, const Math::Vector3& end, const Math::Color& color, float thickness)
 	{
+		using namespace DirectX;
+
+		if (!m_arrowMesh || !m_shader) return;
+
+		Math::Vector3 direction = Math::Vector3(
+			end.x - start.x,
+			end.y - start.y,
+			end.z - start.z
+		);
+
+		float length = sqrtf(
+			direction.x * direction.x +
+			direction.y * direction.y +
+			direction.z * direction.z
+		);
+
+		if (length < 0.0001f) return;
+
+		direction.x /= length;
+		direction.y /= length;
+		direction.z /= length;
+
+		Math::Vector3 center = Math::Vector3(
+			(start.x + end.x) * 0.5f,
+			(start.y + end.y) * 0.5f,
+			(start.z + end.z) * 0.5f
+		);
+
+		XMVECTOR forward = XMVectorSet(direction.x, direction.y, direction.z, 0);
+		forward = XMVector3Normalize(forward);
+		XMVECTOR defaultUp = XMVectorSet(0, 1, 0, 0);
+
+		XMMATRIX rotationMatrix;
+		float dot = XMVectorGetX(XMVector3Dot(defaultUp, forward));
+
+		if (fabs(dot) < 0.9999f)
+		{
+			XMVECTOR rotationAxis = XMVector3Cross(defaultUp, forward);
+			rotationAxis = XMVector3Normalize(rotationAxis);
+			float angle = acosf(dot);
+			rotationMatrix = XMMatrixRotationAxis(rotationAxis, angle);
+		}
+		else
+		{
+			if (dot > 0)
+				rotationMatrix = XMMatrixIdentity();
+			else
+				rotationMatrix = XMMatrixRotationX(Math::PI);
+		}
+
+		XMMATRIX scaleMatrix = XMMatrixScaling(thickness, length, thickness);
+		XMMATRIX translationMatix = XMMatrixTranslation(center.x, center.y, center.z);
+		XMMATRIX worldMatrix = scaleMatrix * rotationMatrix * translationMatix;
+
+		GizmoConstantBuffer cb;
+		XMStoreFloat4x4(&cb.world, XMMatrixTranspose(worldMatrix));
+		XMStoreFloat4x4(&cb.viewProjection,
+			XMMatrixTranspose(camera->GetViewProjectionMatrix()));
+		cb.color = XMFLOAT4(color.r, color.g, color.b, color.a);
+
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		HRESULT hr = context->Map(m_constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		if (SUCCEEDED(hr))
+		{
+			memcpy(mappedResource.pData, &cb, sizeof(GizmoConstantBuffer));
+			context->Unmap(m_constantBuffer.Get(), 0);
+		}
+		context->VSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf());
+		context->PSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf());
+
+		m_shader->Bind(context);
+		m_arrowMesh->Render(context);
 	}
 
 	void Gizmo::RenderCube(ID3D11DeviceContext* context, Camera* camera, const Math::Vector3& position, const Math::Color& color, float size)
 	{
+		using namespace DirectX;
+
+		if (!m_cubeMesh || !m_shader) return;
+
+		XMMATRIX scaleMatrix = XMMatrixScaling(size, size, size);
+		XMMATRIX translationMatrix = XMMatrixTranslation(position.x, position.y, position.z);
+		XMMATRIX worldMatrix = scaleMatrix * translationMatrix;
+
+		GizmoConstantBuffer cb;
+		XMStoreFloat4x4(&cb.world, XMMatrixTranspose(worldMatrix));
+		XMStoreFloat4x4(&cb.viewProjection,
+			XMMatrixTranspose(camera->GetViewProjectionMatrix()));
+		cb.color = XMFLOAT4(color.r, color.g, color.b, color.a);
+
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		HRESULT hr = context->Map(m_constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		if (SUCCEEDED(hr))
+		{
+			memcpy(mappedResource.pData, &cb, sizeof(GizmoConstantBuffer));
+			context->Unmap(m_constantBuffer.Get(), 0);
+		}
+
+		context->VSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf());
+		context->PSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf());
+
+		m_shader->Bind(context);
+		m_cubeMesh->Render(context);
 	}
 
 	bool Gizmo::RayIntersectsAxis(const Math::Ray& ray, const Math::Vector3& origin, 
@@ -644,7 +862,7 @@ namespace Falu
 		return false;
 	}
 
-	bool Gizmo::RayInteersectsCircle(const Math::Ray& ray, const Math::Vector3& center, const Math::Vector3& normal, float radius, float threshold, float& distance) const
+	bool Gizmo::RayIntersectsCircle(const Math::Ray& ray, const Math::Vector3& center, const Math::Vector3& normal, float radius, float threshold, float& distance) const
 	{
 		float denom =
 			normal.x * ray.direction.x +
@@ -703,6 +921,7 @@ namespace Falu
 
 		return ray.GetPoint(t);
 	}
+
 	float Gizmo::GetAdjustedSize(Camera* camera, const Math::Vector3& position) const
 	{
 		Math::Vector3 camPos = camera->GetTransform().GetPosition();

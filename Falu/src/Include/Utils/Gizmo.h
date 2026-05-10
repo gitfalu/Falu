@@ -142,7 +142,7 @@ namespace Falu
 			const Math::Vector3& direction, float length,float threshold,
 			float& distance) const;
 
-		bool RayInteersectsCircle(const Math::Ray& ray, const Math::Vector3& center,
+		bool RayIntersectsCircle(const Math::Ray& ray, const Math::Vector3& center,
 			const Math::Vector3& normal, float radius,float threshold,
 			float& distance) const;
 

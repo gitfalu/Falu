@@ -99,7 +99,7 @@ namespace Falu
 		return nullptr;
 	}
 
-	std::vector<GameObject*> Scene::FinGameObjectByTag(const std::string& tag)
+	std::vector<GameObject*> Scene::FindGameObjectByTag(const std::string& tag)
 	{
 		std::vector<GameObject*> results;
 
@@ -139,7 +139,9 @@ namespace Falu
 
 	std::vector<GameObject*> Scene::RaycastAll(const Math::Ray& ray, float maxDistance)
 	{
-		std::vector<GameObject*> hitObjects;
+		// 接触したオブジェクトの再計算を防ぐためキャッシュに保存
+		std::vector<std::pair<GameObject*, float>> hits; 
+
 
 		for (const auto& obj : m_gameObjects)
 		{
@@ -148,18 +150,24 @@ namespace Falu
 			float distance;
 			if (obj->RayCastHit(ray, distance) && distance <= maxDistance)
 			{
-				hitObjects.push_back(obj.get());
+				hits.emplace_back(obj.get(),distance);
 			}
 		}
 
 		// Sort for near
-		std::sort(hitObjects.begin(), hitObjects.end(),
-			[&ray](GameObject* a, GameObject* b) {
-				float distA, distB;
-				a->RayCastHit(ray, distA);
-				b->RayCastHit(ray, distB);
-				return distA < distB;
+		std::sort(hits.begin(), hits.end(),
+			[](const std::pair<GameObject* ,float>& a, 
+				const std::pair<GameObject*, float>& b) {
+					return a.second < b.second;
 			});
+
+		std::vector<GameObject*> hitObjects;
+		// ソート結果をもとにオブジェクトのみのリストを作成
+		hitObjects.reserve(hits.size());
+		for (const auto& result : hits)
+		{
+			hitObjects.push_back(result.first);
+		}
 
 		return hitObjects;
 	}

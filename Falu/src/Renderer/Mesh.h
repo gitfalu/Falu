@@ -23,8 +23,8 @@ namespace Falu
 	{
 		Math::Vector3 position;
 		Math::Vector3 normal;
-		DirectX::XMFLOAT2 texCoord;
-		Math::Vector4 color;
+		Math::Vector2 texCoord;
+		Math::Color color;
 
 		Vertex()
 			:position(0.0f,0.0f,0.0f)
@@ -35,7 +35,7 @@ namespace Falu
 
 
 		Vertex(const Math::Vector3& pos,const Math::Vector3& norm,
-			const DirectX::XMFLOAT2& tex,const Math::Vector4& col)
+			const Math::Vector2& tex,const Math::Color& col)
 			:position(pos),normal(norm),texCoord(tex),color(col)
 		{}
 	};
@@ -47,8 +47,10 @@ namespace Falu
 		Mesh();
 		~Mesh();
 
+		bool Initialize(ID3D11Device* device, const std::vector<Vertex>& vertices,
+			const std::vector<unsigned int>& indices);
 		bool Create(ID3D11Device* device, const std::vector<Vertex>& vertices,
-			const std::vector<unsigned int>& indicecs);
+			const std::vector<unsigned int>& indices);
 
 		void Render(ID3D11DeviceContext* context);
 		void Release();

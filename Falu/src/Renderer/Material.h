@@ -50,16 +50,28 @@ namespace Falu
 		~Material();
 
 		bool Initialize(ID3D11Device* device);
-		void SetShader(Shader* shader) { m_shader = shader; }
-		void SetProperties(const MaterialProperties& props);
 
-		// Setter
+		// Material Param Setter
+		void SetAlbedo(const Math::Color& color) { m_albedo = color; }
+		void SetMetallic(float metallic) { m_metallic = metallic; }
+		void SetRoughness(float roughness) { m_roughness = roughness; }
+		void SetAO(float ao) { m_ao = ao; }
+		void SetEmissive(const Math::Color& emissive) { m_emissive = emissive; }
+
+		// Material Param Getter
+		Math::Color GetAlbedo()const { return m_albedo; }
+		float GetMetallic() const { return m_metallic; }
+		float GetRoughness()const { return m_roughness; }
+		float GetAO() const { return m_ao; }
+		Math::Color GetEmissive() const { return m_emissive; }
+
+		// Texture Setter
 		void SetAlbedoTexture(Texture* texture) { m_albedoTexture = texture; }
 		void SetNormalTexture(Texture* texture) { m_normalTexture = texture; }
 		void SetMetallicTexture(Texture* texture) { m_metalicTexture = texture; }
 		void SetRoughnessTexture(Texture* texture) { m_roughnesTexture = texture; }
 
-		// Getter
+		// Texture Getter
 		Texture* GetAlbedoTexture() const { return m_albedoTexture; }
 		Texture* GetNormalTexture() const { return m_normalTexture; }
 		Texture* GetMetallicTexture() const { return m_metalicTexture; }
@@ -68,17 +80,29 @@ namespace Falu
 		void Bind(ID3D11DeviceContext* context);
 		void UpdateConstantBuffer(ID3D11DeviceContext* context);
 
+		// Settings Shader
 		Shader* GetShader() const { return m_shader; }
+		void SetShader(Shader* shader) { m_shader = shader; }
+
+		// Settings Properties
 		const MaterialProperties& GetProperties() const { return m_properties; }
+		void SetProperties(const MaterialProperties& props);
 	private:
 		Shader* m_shader;
 		MaterialProperties m_properties;
 		ComPtr<ID3D11Buffer> m_constantBuffer;
 
+		// Texture
 		Texture* m_albedoTexture;
 		Texture* m_normalTexture;
 		Texture* m_metalicTexture;
 		Texture* m_roughnesTexture;//îΩéÀÇ∑ÇÈääÇÁÇ©Ç≥Çí≤êÆÇ∑ÇÈÉ}ÉeÉäÉAÉã
 
+		// Material Paramator
+		Math::Color m_albedo;
+		float m_metallic;
+		float m_roughness;
+		float m_ao;
+		Math::Color m_emissive;
 	};
 }

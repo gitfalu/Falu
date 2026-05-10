@@ -47,6 +47,23 @@ namespace Falu
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 		// スタイル設定
+		ImGuiStyle& style = ImGui::GetStyle();
+		style.WindowRounding = 6.0f;
+		style.FrameRounding = 4.0f;
+		style.ItemSpacing = ImVec2(8, 6);
+		style.WindowPadding = ImVec2(12, 12);
+
+		ImVec4* colors = style.Colors;
+		colors[ImGuiCol_WindowBg] = ImVec4(0.10f, 0.10f, 0.15f, 0.95f);
+		colors[ImGuiCol_TitleBg] = ImVec4(0.08f, 0.08f, 0.20f, 1.00f);
+		colors[ImGuiCol_TitleBgActive] = ImVec4(0.15f, 0.15f, 0.40f, 1.00f);
+		colors[ImGuiCol_Header] = ImVec4(0.20f, 0.40f, 0.70f, 0.50f);
+		colors[ImGuiCol_HeaderHovered] = ImVec4(0.25f, 0.50f, 0.85f, 0.70f);
+		colors[ImGuiCol_Button] = ImVec4(0.20f, 0.40f, 0.70f, 0.60f);
+		colors[ImGuiCol_ButtonHovered] = ImVec4(0.25f, 0.50f, 0.85f, 0.80f);
+		colors[ImGuiCol_FrameBg] = ImVec4(0.15f, 0.15f, 0.22f, 1.00f);
+
+		// スタイル設定
 		ImGui::StyleColorsDark();
 
 		// バックエンドの初期化
@@ -235,7 +252,7 @@ namespace Falu
 		ImGui::Separator();
 		ImGui::Text("Lights:");
 
-		auto& lights = LightManager::GetInstace().GetLights();
+		auto& lights = LightManager::GetInstance().GetLights();
 		for (size_t i = 0; i < lights.size(); ++i)
 		{
 			char label[64];

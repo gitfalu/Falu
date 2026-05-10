@@ -18,6 +18,11 @@ namespace Falu
 		, m_normalTexture(nullptr)
 		, m_metalicTexture(nullptr)
 		, m_roughnesTexture(nullptr)
+		, m_albedo(1.0f,1.0f,1.0f,1.0f)
+		, m_metallic(0.0f)
+		, m_roughness(0.5f)
+		, m_ao(1.0f)
+		, m_emissive(0.0f,0.0f,0.0f,0.0f)
 	{
 
 	}
@@ -68,6 +73,8 @@ namespace Falu
 
 		if (m_roughnesTexture)
 			m_roughnesTexture->Bind(context, 3);
+
+		// Update Material Constant Buffer
 	}
 
 	void Material::UpdateConstantBuffer(ID3D11DeviceContext* context)
