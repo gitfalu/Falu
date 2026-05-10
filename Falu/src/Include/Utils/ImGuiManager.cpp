@@ -47,24 +47,90 @@ namespace Falu
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 		// スタイル設定
+		ImGui::StyleColorsDark();
 		ImGuiStyle& style = ImGui::GetStyle();
+
+		//=== ウィンドウの丸み・余白 ===
 		style.WindowRounding = 6.0f;
 		style.FrameRounding = 4.0f;
-		style.ItemSpacing = ImVec2(8, 6);
-		style.WindowPadding = ImVec2(12, 12);
+		style.ScrollbarRounding = 4.0f;
+		style.GrabRounding = 4.0f;
+		style.TabRounding = 4.0f;
+		style.ChildRounding = 4.0f;
+		style.PopupRounding = 4.0f;
 
+		style.WindowPadding = ImVec2(12.0f, 12.0f);
+		style.FramePadding = ImVec2(8.0f, 4.0f);
+		style.ItemSpacing = ImVec2(8.0f, 6.0f);
+		style.ItemInnerSpacing = ImVec2(6.0f, 4.0f);
+		style.IndentSpacing = 16.0f;
+		style.ScrollbarSize = 12.0f;
+		style.GrabMinSize = 10.0f;
+
+		style.WindowBorderSize = 1.0f;
+		style.FrameBorderSize = 0.0f;
+
+		//=== カラーテーマ（深いネイビー系） ===
 		ImVec4* colors = style.Colors;
-		colors[ImGuiCol_WindowBg] = ImVec4(0.10f, 0.10f, 0.15f, 0.95f);
-		colors[ImGuiCol_TitleBg] = ImVec4(0.08f, 0.08f, 0.20f, 1.00f);
-		colors[ImGuiCol_TitleBgActive] = ImVec4(0.15f, 0.15f, 0.40f, 1.00f);
-		colors[ImGuiCol_Header] = ImVec4(0.20f, 0.40f, 0.70f, 0.50f);
-		colors[ImGuiCol_HeaderHovered] = ImVec4(0.25f, 0.50f, 0.85f, 0.70f);
-		colors[ImGuiCol_Button] = ImVec4(0.20f, 0.40f, 0.70f, 0.60f);
-		colors[ImGuiCol_ButtonHovered] = ImVec4(0.25f, 0.50f, 0.85f, 0.80f);
-		colors[ImGuiCol_FrameBg] = ImVec4(0.15f, 0.15f, 0.22f, 1.00f);
+
+		// 背景
+		colors[ImGuiCol_WindowBg] = ImVec4(0.08f, 0.09f, 0.14f, 0.97f);
+		colors[ImGuiCol_ChildBg] = ImVec4(0.10f, 0.11f, 0.17f, 1.00f);
+		colors[ImGuiCol_PopupBg] = ImVec4(0.08f, 0.09f, 0.14f, 0.97f);
+
+		// タイトルバー
+		colors[ImGuiCol_TitleBg] = ImVec4(0.05f, 0.06f, 0.12f, 1.00f);
+		colors[ImGuiCol_TitleBgActive] = ImVec4(0.10f, 0.18f, 0.42f, 1.00f);
+		colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.05f, 0.06f, 0.12f, 0.80f);
+
+		// ヘッダー（Selectableなど）
+		colors[ImGuiCol_Header] = ImVec4(0.15f, 0.28f, 0.60f, 0.50f);
+		colors[ImGuiCol_HeaderHovered] = ImVec4(0.20f, 0.38f, 0.75f, 0.70f);
+		colors[ImGuiCol_HeaderActive] = ImVec4(0.25f, 0.45f, 0.85f, 1.00f);
+
+		// ボタン
+		colors[ImGuiCol_Button] = ImVec4(0.15f, 0.28f, 0.60f, 0.70f);
+		colors[ImGuiCol_ButtonHovered] = ImVec4(0.20f, 0.38f, 0.80f, 0.90f);
+		colors[ImGuiCol_ButtonActive] = ImVec4(0.25f, 0.45f, 0.95f, 1.00f);
+
+		// フレーム（InputText、スライダーの背景）
+		colors[ImGuiCol_FrameBg] = ImVec4(0.12f, 0.14f, 0.22f, 1.00f);
+		colors[ImGuiCol_FrameBgHovered] = ImVec4(0.18f, 0.22f, 0.35f, 1.00f);
+		colors[ImGuiCol_FrameBgActive] = ImVec4(0.22f, 0.28f, 0.45f, 1.00f);
+
+		// スライダー・チェックボックスのグラブ
+		colors[ImGuiCol_SliderGrab] = ImVec4(0.30f, 0.55f, 1.00f, 0.80f);
+		colors[ImGuiCol_SliderGrabActive] = ImVec4(0.40f, 0.65f, 1.00f, 1.00f);
+		colors[ImGuiCol_CheckMark] = ImVec4(0.40f, 0.70f, 1.00f, 1.00f);
+
+		// タブ
+		colors[ImGuiCol_Tab] = ImVec4(0.10f, 0.14f, 0.28f, 1.00f);
+		colors[ImGuiCol_TabHovered] = ImVec4(0.20f, 0.38f, 0.75f, 0.90f);
+		colors[ImGuiCol_TabActive] = ImVec4(0.15f, 0.28f, 0.60f, 1.00f);
+		colors[ImGuiCol_TabUnfocused] = ImVec4(0.07f, 0.10f, 0.20f, 1.00f);
+		colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.12f, 0.20f, 0.40f, 1.00f);
+
+		// セパレーター
+		colors[ImGuiCol_Separator] = ImVec4(0.25f, 0.30f, 0.50f, 0.60f);
+		colors[ImGuiCol_SeparatorHovered] = ImVec4(0.30f, 0.50f, 0.80f, 0.80f);
+		colors[ImGuiCol_SeparatorActive] = ImVec4(0.35f, 0.60f, 1.00f, 1.00f);
+
+		// スクロールバー
+		colors[ImGuiCol_ScrollbarBg] = ImVec4(0.06f, 0.07f, 0.12f, 1.00f);
+		colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.20f, 0.30f, 0.55f, 0.80f);
+		colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.25f, 0.40f, 0.70f, 0.90f);
+		colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.30f, 0.50f, 0.85f, 1.00f);
+
+		// テキスト
+		colors[ImGuiCol_Text] = ImVec4(0.90f, 0.92f, 1.00f, 1.00f);
+		colors[ImGuiCol_TextDisabled] = ImVec4(0.40f, 0.45f, 0.60f, 1.00f);
+
+		// ドッキング
+		colors[ImGuiCol_DockingPreview] = ImVec4(0.25f, 0.50f, 1.00f, 0.60f);
+		colors[ImGuiCol_DockingEmptyBg] = ImVec4(0.06f, 0.07f, 0.12f, 1.00f);
+
 
 		// スタイル設定
-		ImGui::StyleColorsDark();
 
 		// バックエンドの初期化
 		if (!ImGui_ImplWin32_Init(hWnd))
