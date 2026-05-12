@@ -47,9 +47,9 @@ struct VS_INPUT
 struct PS_INPUT
 {
     float4 Position : SV_POSITION;
-    float3 WorldPos : POSITIONO;
+    float3 WorldPos : POSITION0;
     float3 Normal : NORMAL;
-    float2 TexCoord : TEXCOORD0;
+    float2 TexCoord : TEXCOORD1;
     float4 Color : COLOR;
 };
 
@@ -139,7 +139,7 @@ float4 PS_Main(PS_INPUT input) : SV_TARGET
 //**********************************************
 float4 PS_Unlit(PS_INPUT input) : SV_TARGET
 {
-    float albedo = MaterialAlbedo * input.Color;
+    float4 albedo = MaterialAlbedo * input.Color;
     if(MaterialProperties.w > 0.5f)
     {
         float4 texColor = AlbedoTexture.Sample(DefaultSampler, input.TexCoord);

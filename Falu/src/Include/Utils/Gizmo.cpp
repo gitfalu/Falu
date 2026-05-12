@@ -97,37 +97,45 @@ namespace Falu
 
 		m_selectedAxis = GetHoveredAxis(ray, target,camera);
 
-		if (m_selectedAxis != GizmoAxis::None)
+		if (m_selectedAxis == GizmoAxis::None) return;
+		m_isDragging = true;
+		m_dragStartPosition = target->GetTransform().GetPosition();
+		m_dragStartRotation = target->GetTransform().GetRotation();
+		m_dragStartScale = target->GetTransform().GetScale();
+
+		Math::Vector3 camDir = camera->GetTransform().GetForward();
+
+		switch (m_selectedAxis)
 		{
-			m_isDragging = true;
-			m_dragStartPosition = target->GetTransform().GetPosition();
-			m_dragStartRotation = target->GetTransform().GetRotation();
-			m_dragStartScale = target->GetTransform().GetScale();
-
-			Math::Vector3 camDir = camera->GetTransform().GetForward();
-
-			switch (m_selectedAxis)
-			{
-			case Falu::GizmoAxis::X:
-				m_dragPlaneNormal = Math::Vector3(1, 0, 0);
-				break;
-			case Falu::GizmoAxis::Y:
+		case Falu::GizmoAxis::X:
+			if(fabsf(camDir.y) > fabsf(camDir.z))
 				m_dragPlaneNormal = Math::Vector3(0, 1, 0);
-				break;
-			case Falu::GizmoAxis::Z:
+			else
 				m_dragPlaneNormal = Math::Vector3(0, 0, 1);
-				break;
-			default:
+			break;
+		case Falu::GizmoAxis::Y:
+			if(fabsf(camDir.x) > fabsf(camDir.z))
+				m_dragPlaneNormal = Math::Vector3(1, 0, 0);
+			else
+				m_dragPlaneNormal = Math::Vector3(0, 0, 1);
+			break;
+		case Falu::GizmoAxis::Z:
+			if (fabsf(camDir.y) > fabsf(camDir.x))
 				m_dragPlaneNormal = Math::Vector3(0, 1, 0);
-				break;
-			}
-
-			m_dragStartMouseWorld = GetMouseWorldPosition(ray, m_dragPlaneNormal, m_dragStartPosition);
-
-			char msg[256];
-			sprintf_s(msg, "[Gizmo] Drag started on axis: %d\n", (int)m_selectedAxis);
-			OutputDebugStringA(msg);
+			else
+				m_dragPlaneNormal = Math::Vector3(1, 0, 0);
+			break;
+			break;
+		default:
+			m_dragPlaneNormal = Math::Vector3(0, 1, 0);
+			break;
 		}
+
+		m_dragStartMouseWorld = GetMouseWorldPosition(ray, m_dragPlaneNormal, m_dragStartPosition);
+
+		char msg[256];
+		sprintf_s(msg, "[Gizmo] Drag started on axis: %d\n", (int)m_selectedAxis);
+		OutputDebugStringA(msg);
 	}
 
 	void Gizmo::OnMouseDrag(const Math::Ray& ray, GameObject* target, Camera* camera)
