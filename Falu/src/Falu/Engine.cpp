@@ -165,6 +165,8 @@ namespace Falu
 		{
 			HandleMousePicking();
 		}
+
+		HandleCameraInput(deltaTime);
 	}
 
 	void Engine::Render()
@@ -407,6 +409,53 @@ namespace Falu
 			m_gizmoClicked = false;
 		}
 
+	}
+	void Engine::HandleCameraInput(float deltaTime)
+	{
+		auto input = GetInputManager();
+		if (!input) return;
+
+		if (ImGui::GetIO().WantCaptureMouse) return;
+
+		auto scene = m_sceneManager->GetCurrentScene();
+		if (!scene) return;
+
+		Camera* camera = scene->GetMainCamera();
+		if (!camera) return;
+
+		float moveSpeed = 5.0f * deltaTime;
+
+		if (input->IsKeyHeld(KeyCode::W)) camera->MoveForward(moveSpeed);
+		if (input->IsKeyHeld(KeyCode::S)) camera->MoveForward(-moveSpeed);
+		if (input->IsKeyHeld(KeyCode::A)) camera->MoveRight(-moveSpeed);
+		if (input->IsKeyHeld(KeyCode::D)) camera->MoveRight(moveSpeed);
+		if (input->IsKeyHeld(KeyCode::Q)) camera->MoveUp(moveSpeed);
+		if (input->IsKeyHeld(KeyCode::E)) camera->MoveUp(-moveSpeed);
+
+		if (input->IsMouseButtonHeld(MouseButton::Right))
+		{
+			int dx = input->GetMouseDeltaX();
+			int dy = input->GetMouseDeltaY();
+
+			if (dx != 0 || dy != 0)
+			{
+				camera->Rotate(
+					(float)dy,
+					(float)dx
+				);
+			}
+			input->ShowCursor(false);
+		}
+		else
+		{
+			input->ShowCursor(true);
+		}
+
+		int wheelDelta = input->GetMouseWheelDelta();
+		if (wheelDelta != 0)
+		{
+			camera->Zoom((float)wheelDelta);
+		}
 	}
 }
 

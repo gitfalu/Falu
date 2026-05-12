@@ -55,6 +55,14 @@ namespace Falu
 		void MoveRight(float distance);
 		void MoveUp(float distance);
 
+		//=== マウス回転・ズーム ===
+		void Rotate(float deltaPithch, float deltaYaw);
+		void Zoom(float delta);
+
+		//=== 感度設定 ===
+		void SetRotateSensitivity(float sensitivity) { m_rotateSensitivity = sensitivity; }
+		void SetZoomSensitivity(float sensitivity) { m_zoomSensitivity = sensitivity; }
+
 		//=== Create Ray from Screen ===
 		Math::Ray ScreenPointToRay(float screenX, float screenY, float screenWidth, float screenHeight)const;
 
@@ -64,6 +72,14 @@ namespace Falu
 	private:
 		Transform m_transform;
 		DirectX::XMMATRIX m_projectionMatrix;
+
+		//=== 感度パラメータ ===
+		float m_rotateSensitivity = 0.003f;
+		float m_zoomSensitivity = 0.5f;
+
+		//=== ジンバルロック防止 ===
+		float m_pitchMin = Math::ToRadians(-89.0f);
+		float m_pitchMax = Math::ToRadians(89.0f);
 
 		ProjectionType m_projectionType;
 		float m_fov;

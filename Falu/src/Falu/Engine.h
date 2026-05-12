@@ -54,6 +54,9 @@ namespace Falu
 		//=== Gizmo Control ===
 		void HandleGizmoInput();
 
+		//=== Camera Control ===
+		void HandleCameraInput(float deltaTime);
+
 	private:
 		std::unique_ptr<Window> m_window;
 		std::unique_ptr<Renderer> m_renderer;

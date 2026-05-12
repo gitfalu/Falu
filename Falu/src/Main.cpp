@@ -225,22 +225,7 @@ public:
 		Scene::Update(deltaTime);
 
 		auto input = Engine::GetInstance().GetInputManager();
-
-		// Move Camera
-		float moveSpeed = 5.0f * deltaTime;
-		if (input->IsKeyHeld(KeyCode::W))
-			m_camera->MoveForward(moveSpeed);
-		if (input->IsKeyHeld(KeyCode::S))
-			m_camera->MoveForward(-moveSpeed);
-		if (input->IsKeyHeld(KeyCode::A))
-			m_camera->MoveRight(-moveSpeed);
-		if (input->IsKeyHeld(KeyCode::D))
-			m_camera->MoveRight(moveSpeed);
-		if (input->IsKeyHeld(KeyCode::Q))
-			m_camera->MoveUp(moveSpeed);
-		if (input->IsKeyHeld(KeyCode::E))
-			m_camera->MoveUp(-moveSpeed);
-
+		
 		// Object Animation
 		static float time = 0.0f;
 		time += deltaTime;

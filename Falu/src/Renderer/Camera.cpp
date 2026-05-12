@@ -145,6 +145,28 @@ namespace Falu
 		));
 	}
 
+	void Camera::Rotate(float deltaPithch, float deltaYaw)
+	{
+		Math::Vector3 rot = m_transform.GetRotation();
+
+		rot.x += deltaPithch * m_rotateSensitivity;
+		rot.y += deltaYaw * m_rotateSensitivity;
+		// ”½“]–hŽ~‚Ì‚½‚ßƒNƒ‰ƒ“ƒv
+		rot.x = Math::Clamp(rot.x, m_pitchMin, m_pitchMax);
+
+		m_transform.SetRotation(rot.x, rot.y, rot.z);
+	}
+
+	void Camera::Zoom(float delta)
+	{
+		Math::Vector3 forward = m_transform.GetForward();
+		m_transform.Translate(Math::Vector3(
+			forward.x * delta * m_zoomSensitivity,
+			forward.y * delta * m_zoomSensitivity,
+			forward.z * delta * m_zoomSensitivity
+		));
+	}
+
 	Math::Ray Camera::ScreenPointToRay(float screenX, float screenY, float screenWidth, float screenHeight) const
 	{
 		using namespace DirectX;
