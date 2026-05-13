@@ -179,7 +179,8 @@ namespace Falu
 		// PerObject 定数のバッファの更新
 		PerObjectConstantBuffer perObject;
 		perObject.world = XMMatrixTranspose(worldMatrix);
-		perObject.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, worldMatrix));
+		XMMATRIX invWorld = XMMatrixInverse(nullptr, worldMatrix);
+		perObject.worldInvTranspose = XMMatrixTranspose(invWorld);
 
 		m_perObjectCB.Update(m_context.Get(), perObject);
 		m_perObjectCB.BindVS(m_context.Get(), 0);
@@ -285,7 +286,7 @@ namespace Falu
 
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		HRESULT hr = m_context->Map(outlineBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-		if (FAILED(hr))
+		if (SUCCEEDED(hr))
 		{
 			memcpy(mappedResource.pData, &cb, sizeof(OutlineConstantBuffer));
 			m_context->Unmap(outlineBuffer.Get(), 0);
